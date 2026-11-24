@@ -829,3 +829,160 @@ input::placeholder {
     opacity: 0.2;
   }
 }
+.minute-picker {
+  max-width: 300px;
+  margin: 12px auto;
+}
+
+.minute-options {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.minute-options button,
+.minute-adjust button {
+  min-height: 46px;
+  border: 1px solid #b9c9dc;
+  border-radius: 12px;
+  background: white;
+  color: #173b63;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.minute-options button.selected {
+  background: #173b63;
+  color: white;
+}
+
+.minute-adjust {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.minute-adjust button {
+  min-width: 55px;
+}
+
+.minute-adjust span {
+  font-size: 13px;
+  color: #173b63;
+}
+
+/* CLEAN TASK PAGE DESIGN */
+
+.task-form {
+  gap: 18px;
+  padding: 8px 0;
+}
+
+.task-form > label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.task-form input,
+.task-form select {
+  min-height: 46px;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.quick-task-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+  margin: 4px 0 12px;
+}
+
+.quick-task-buttons button {
+  min-height: 44px;
+  border-radius: 12px;
+  padding: 8px;
+  font-weight: 600;
+}
+
+.time-fields {
+  gap: 16px;
+  align-items: start;
+}
+
+.repeat-option {
+  padding: 14px;
+  border: 1px solid #c5d3e4;
+  border-radius: 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.approval-card {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  margin: 14px 0;
+  border-radius: 16px;
+  border: 1px solid #c5d3e4;
+  box-shadow: 0 3px 10px #25365310;
+}
+
+.task-info h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.task-info p {
+  line-height: 1.6;
+  margin: 4px 0 10px;
+}
+
+.approval-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #c5d3e4;
+}
+
+.approval-child {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.task-status {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .task-form {
+    gap: 16px;
+  }
+
+  .quick-task-buttons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .time-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .approval-card {
+    padding: 14px;
+  }
+
+  .approval-actions {
+    align-items: stretch;
+  }
+}

@@ -177,7 +177,7 @@ function TimePicker({ label, value, onChange, disabled = false }: {
 
   const numbers = stage === 'hour'
     ? Array.from({ length: 12 }, (_, i) => i === 0 ? 12 : i)
-    : Array.from({ length: 60 }, (_, i) => i);
+    : Array.from({ length: 12 }, (_, i) => i * 5);
 
   function chooseNumber(number: number) {
     if (stage === 'hour') {
@@ -185,8 +185,12 @@ function TimePicker({ label, value, onChange, disabled = false }: {
       setStage('minute');
     } else {
       onChange(make24HourTime(parts.hour, String(number).padStart(2, '0'), parts.period));
-      setStage('hour');
     }
+  }
+
+  function adjustMinute(amount: number) {
+    const minute = (Number(parts.minute) + amount + 60) % 60;
+    onChange(make24HourTime(parts.hour, String(minute).padStart(2, '0'), parts.period));
   }
 
   return (
@@ -223,29 +227,50 @@ function TimePicker({ label, value, onChange, disabled = false }: {
             Select {stage === 'hour' ? 'hour' : 'minutes'}
           </p>
 
-          <div className="clock-face">
-            {numbers.map(number => {
-              const angle = (number / (stage === 'hour' ? 12 : 60)) * Math.PI * 2;
-              const left = 50 + Math.sin(angle) * 40;
-              const top = 50 - Math.cos(angle) * 40;
-              const selected = stage === 'hour'
-                ? Number(parts.hour) === number
-                : Number(parts.minute) === number;
+          {stage === 'hour' ? (
+            <div className="clock-face">
+              {numbers.map(number => {
+                const angle = (number / 12) * Math.PI * 2;
+                const left = 50 + Math.sin(angle) * 40;
+                const top = 50 - Math.cos(angle) * 40;
+                const selected = Number(parts.hour) === number;
 
-              return (
-                <button
-                  type="button"
-                  key={number}
-                  className={`clock-number ${selected ? 'selected' : ''}`}
-                  style={{ left: `${left}%`, top: `${top}%` }}
-                  onClick={() => chooseNumber(number)}
-                >
-                  {stage === 'minute' ? String(number).padStart(2, '0') : number}
-                </button>
-              );
-            })}
-            <div className="clock-center" />
-          </div>
+                return (
+                  <button
+                    type="button"
+                    key={number}
+                    className={`clock-number ${selected ? 'selected' : ''}`}
+                    style={{ left: `${left}%`, top: `${top}%` }}
+                    onClick={() => chooseNumber(number)}
+                  >
+                    {number}
+                  </button>
+                );
+              })}
+              <div className="clock-center" />
+            </div>
+          ) : (
+            <div className="minute-picker">
+              <div className="minute-options">
+                {numbers.map(number => (
+                  <button
+                    type="button"
+                    key={number}
+                    className={Number(parts.minute) === number ? 'selected' : ''}
+                    onClick={() => chooseNumber(number)}
+                  >
+                    {String(number).padStart(2, '0')}
+                  </button>
+                ))}
+              </div>
+
+              <div className="minute-adjust">
+                <button type="button" onClick={() => adjustMinute(-1)}>−1</button>
+                <span>Exact minute</span>
+                <button type="button" onClick={() => adjustMinute(1)}>+1</button>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>
