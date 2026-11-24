@@ -3,11 +3,32 @@
   box-sizing: border-box;
 }
 
+:root {
+  color-scheme: dark;
+  --bg: #0b1422;
+  --surface: #142338;
+  --surface-light: #1c3048;
+  --border: #2b4159;
+  --text: #f3f6fa;
+  --muted: #a9bacb;
+  --green: #21a477;
+  --green-light: #b5f0d5;
+  --gold: #f4cf70;
+}
+
+html {
+  min-height: 100%;
+  background: var(--bg);
+}
+
 body {
   margin: 0;
+  min-height: 100vh;
   font-family: 'Trebuchet MS', Arial, sans-serif;
-  background: linear-gradient(135deg, #f8f0ff, #fff0f5, #fff9e9);
-  color: #39314f;
+  background:
+    radial-gradient(circle at top right, #17364a 0, transparent 35%),
+    linear-gradient(145deg, #0b1422, #101e30 55%, #102b32);
+  color: var(--text);
 }
 
 button, input, select {
@@ -16,29 +37,36 @@ button, input, select {
 
 button {
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
 }
 
 button:hover {
   transform: translateY(-2px);
 }
 
+button:active {
+  transform: scale(0.97);
+}
+
 .app-header {
-  background: linear-gradient(120deg, #9274d8, #e69ac7);
+  background: linear-gradient(120deg, #102d3b, #176b59, #164b48);
   color: white;
-  padding: 25px 18px;
+  padding: 28px 18px;
   text-align: center;
-  border-radius: 0 0 30px 30px;
-  box-shadow: 0 5px 18px #9274d844;
+  border-bottom: 2px solid #b99b4e;
+  border-radius: 0 0 26px 26px;
+  box-shadow: 0 8px 25px #0005;
 }
 
 .app-header h1 {
   margin: 0;
   font-size: 30px;
+  color: #f8dc91;
 }
 
 .app-header p {
   margin: 8px 0 0;
+  color: #d3e9e0;
 }
 
 .main-content {
@@ -47,43 +75,44 @@ button:hover {
 }
 
 .card {
-  background: #ffffffed;
-  border: 1px solid #eee2ff;
+  background: linear-gradient(145deg, #182a40, #132337);
+  border: 1px solid var(--border);
   border-radius: 22px;
   padding: 20px;
   margin-bottom: 20px;
-  box-shadow: 0 5px 18px #7861a51a;
+  box-shadow: 0 8px 25px #0003;
 }
 
 h2, h3 {
-  color: #7655b5;
+  color: var(--green-light);
 }
 
 button {
-  border: none;
+  border: 1px solid #35536b;
   border-radius: 13px;
-  padding: 11px 16px;
-  background: #eee5ff;
-  color: #62449e;
+  padding: 12px 16px;
+  background: #20364e;
+  color: #f3f6fa;
   font-weight: bold;
-}
-
-button:active {
-  transform: scale(0.97);
 }
 
 input, select {
   width: 100%;
-  border: 1px solid #ded1f2;
+  border: 1px solid #3b536b;
   border-radius: 12px;
-  padding: 12px;
-  background: white;
-  color: #39314f;
+  padding: 13px;
+  background: #0e1c2d;
+  color: white;
   margin: 5px 0 12px;
 }
 
 input:focus, select:focus {
-  outline: 2px solid #c9aaf5;
+  outline: 2px solid var(--green);
+  border-color: var(--green);
+}
+
+input::placeholder {
+  color: #91a4b8;
 }
 
 .child-selector {
@@ -95,25 +124,37 @@ input:focus, select:focus {
 }
 
 .child-selector button {
-  background: #f3eaff;
-  border: 2px solid #e5d4ff;
+  background: #1b3046;
+  border: 2px solid #38516a;
   border-radius: 18px;
 }
 
 .child-welcome {
   text-align: center;
-  padding: 18px;
-  background: linear-gradient(135deg, #fff0f7, #f1eaff);
+  padding: 20px;
+  background: linear-gradient(135deg, #183d40, #19314a);
+  border: 1px solid #38645c;
   border-radius: 22px;
 }
 
 .child-photo {
-  width: 105px;
-  height: 105px;
+  width: 65px;
+  height: 65px;
+  min-width: 65px;
   border-radius: 50%;
   object-fit: cover;
-  border: 5px solid white;
-  box-shadow: 0 4px 15px #9d78bd44;
+  border: 3px solid var(--gold);
+  box-shadow: 0 4px 15px #0005;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.child-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
 }
 
 .children-grid {
@@ -124,8 +165,8 @@ input:focus, select:focus {
 
 .child-card {
   text-align: center;
-  background: linear-gradient(145deg, #fff4f9, #f2edff);
-  border: 1px solid #f0dff4;
+  background: linear-gradient(145deg, #20364b, #183044);
+  border: 1px solid #3b5a68;
   border-radius: 22px;
   padding: 20px;
 }
@@ -136,12 +177,13 @@ input:focus, select:focus {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  background: #fffafd;
-  border: 1px solid #f0e3f4;
-  border-radius: 12px;
-  padding: 10px 14px;
-  margin: 8px 0;
-  min-height: 65px;
+  background: #1b2d42;
+  border: 1px solid #344c64;
+  border-left: 4px solid var(--green);
+  border-radius: 15px;
+  padding: 12px 14px;
+  margin: 10px 0;
+  min-height: 68px;
 }
 
 .task-info {
@@ -157,45 +199,42 @@ input:focus, select:focus {
   min-width: 0;
   margin: 0;
   font-size: 15px;
+  color: white;
 }
 
 .task-info p {
   margin: 0;
   white-space: nowrap;
   font-size: 13px;
+  color: var(--muted);
 }
 
 .task-status {
   display: inline-block;
-  background: #fff2d9;
-  color: #986b26;
+  background: #4b3d20;
+  color: #ffdf91;
   border-radius: 20px;
-  padding: 5px 10px;
-  font-size: 13px;
-}.task-status {
-  display: inline-block;
-  background: #fff2d9;
-  color: #986b26;
-  border-radius: 20px;
-  padding: 5px 10px;
-  font-size: 13px;
+  padding: 6px 10px;
+  font-size: 12px;
 }
 
 .task-tick {
-  min-width: 45px;
-  min-height: 45px;
+  min-width: 48px;
+  min-height: 48px;
   border-radius: 50%;
-  background: #e5f8e9;
-  color: #31874d;
+  background: #176b50;
+  color: #d3ffe8;
+  border: 2px solid #36b989;
   font-size: 20px;
 }
 
 .approval-card {
-  background: #fff8e8;
-  border: 1px solid #f4dfad;
+  background: #302c20;
+  border: 1px solid #88703b;
   border-radius: 16px;
   padding: 14px;
   margin: 10px 0;
+  color: #ffe6a5;
 }
 
 .quick-task-buttons {
@@ -206,7 +245,9 @@ input:focus, select:focus {
 }
 
 .quick-task-buttons button {
-  background: #f1eaff;
+  background: #203c43;
+  border-color: #386d62;
+  color: #c5f5df;
   font-size: 13px;
 }
 
@@ -222,51 +263,31 @@ input:focus, select:focus {
 }
 
 .repeat-option {
-  background: #fff2f8;
+  background: #203b42;
+  border: 1px solid #38645c;
   border-radius: 12px;
   padding: 12px;
+  color: #d5f5e7;
 }
 
 .photo-upload {
-  background: #f4edff;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--green-light);
+  font-weight: bold;
+  background: #1c3544;
+  border: 1px solid #365c62;
   padding: 12px;
   border-radius: 15px;
   margin: 10px 0;
 }
 
-@media (max-width: 600px) {
-  .app-header {
-    padding: 20px 12px;
-  }
-
-  .app-header h1 {
-    font-size: 25px;
-  }
-
-  .main-content {
-    width: calc(100% - 20px);
-    margin: 15px auto;
-  }
-
-  .card {
-    padding: 15px;
-    border-radius: 18px;
-  }
-
-  .time-fields {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  .task-card {
-    padding: 12px;
-  }
-
-  .child-photo {
-    width: 90px;
-    height: 90px;
-  }
+.photo-upload input {
+  max-width: 100%;
 }
+
 .child-selector button {
   display: inline-flex;
   align-items: center;
@@ -275,61 +296,26 @@ input:focus, select:focus {
   min-height: 58px;
   padding: 8px 16px;
   border-radius: 18px;
-  background: linear-gradient(135deg, #f4eaff, #fff0f7);
-  border: 2px solid #e5d4ff;
+  background: #1b3046;
+  border: 2px solid #38516a;
   font-weight: bold;
-}
-
-.child-selector button img {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid white;
-}
-
-.child-selector button.active {
-  background: linear-gradient(135deg, #d9c5ff, #ffd6e9);
-  border-color: #a985df;
-  box-shadow: 0 4px 12px #a985df44;
-}
-
-.photo-upload {
-  display: inline-flex;
-  flex-direction: column;
-  gap: 8px;
-  cursor: pointer;
-  color: #7655b5;
-  font-weight: bold;
-}
-
-.photo-upload input {
-  max-width: 100%;
-}
-/* Normal child profile photo size */
-.child-photo {
-  width: 65px;
-  height: 65px;
-  min-width: 65px;
-  border-radius: 50%;
-  overflow: hidden;
-  margin: 0 auto;
-}
-
-.child-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-  display: block;
 }
 
 .child-selector button img {
   width: 38px;
   height: 38px;
-  object-fit: cover;
   border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--gold);
 }
+
+.child-selector button.active {
+  background: linear-gradient(135deg, #176d55, #204d4b);
+  border-color: var(--gold);
+  box-shadow: 0 4px 15px #0005;
+  color: #fff2c4;
+}
+
 .time-picker {
   display: flex;
   align-items: center;
@@ -341,9 +327,217 @@ input:focus, select:focus {
   flex: 1;
   min-width: 0;
   padding: 12px 8px;
-  border: 1px solid #e4d7ec;
+  border: 1px solid #3b536b;
   border-radius: 10px;
-  background: white;
-  color: #302d49;
+  background: #0e1c2d;
+  color: white;
   font-size: 16px;
+}
+
+@media (max-width: 600px) {
+  body {
+    font-size: 15px;
+  }
+
+  .app-header {
+    padding: 24px 14px;
+    border-radius: 0 0 22px 22px;
+  }
+
+  .app-header h1 {
+    font-size: 25px;
+  }
+
+  .app-header p {
+    font-size: 14px;
+  }
+
+  .main-content {
+    width: calc(100% - 20px);
+    margin: 15px auto;
+  }
+
+  .card {
+    padding: 15px;
+    border-radius: 18px;
+    margin-bottom: 15px;
+  }
+
+  .children-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .child-card {
+    padding: 14px 8px;
+    border-radius: 17px;
+  }
+
+  .child-selector {
+    gap: 8px;
+  }
+
+  .child-selector button {
+    flex: 1;
+    min-height: 56px;
+    padding: 7px 9px;
+    font-size: 14px;
+  }
+
+  .task-card {
+    padding: 12px 10px;
+    gap: 8px;
+    border-radius: 14px;
+  }
+
+  .task-info {
+    gap: 8px;
+  }
+
+  .task-info h3 {
+    font-size: 14px;
+  }
+
+  .task-info p {
+    font-size: 12px;
+  }
+
+  .task-tick {
+    min-width: 46px;
+    min-height: 46px;
+  }
+
+  .task-status {
+    font-size: 11px;
+    padding: 5px 8px;
+  }
+
+  .time-fields {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  input, select {
+    min-height: 46px;
+  }
+
+  button {
+    min-height: 44px;
+  }
+
+  .quick-task-buttons button {
+    padding: 10px 12px;
+  }
+
+  .child-photo {
+    width: 65px;
+    height: 65px;
+    min-width: 65px;
+  }
+}
+
+/* Improved phone layout */
+
+@media (max-width: 600px) {
+  html, body {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .app-header {
+    padding: 20px 12px;
+  }
+
+  .app-header h1 {
+    font-size: clamp(21px, 6vw, 26px);
+  }
+
+  .main-content {
+    width: calc(100% - 16px);
+    margin: 12px auto;
+  }
+
+  .card {
+    padding: 13px;
+    margin-bottom: 12px;
+    border-radius: 16px;
+  }
+
+  .children-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .child-card {
+    min-width: 0;
+    padding: 12px 6px;
+  }
+
+  .child-welcome {
+    padding: 15px 10px;
+  }
+
+  .task-card {
+    width: 100%;
+    min-width: 0;
+    gap: 6px;
+    padding: 10px 8px;
+  }
+
+  .task-info {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .task-info h3 {
+    overflow-wrap: anywhere;
+  }
+
+  .task-info p {
+    white-space: normal;
+  }
+
+  .task-tick {
+    flex-shrink: 0;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .task-status {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .task-form {
+    min-width: 0;
+  }
+
+  .time-fields {
+    gap: 7px;
+  }
+
+  .time-picker {
+    gap: 4px;
+  }
+
+  .time-picker select {
+    padding: 10px 4px;
+    font-size: 14px;
+  }
+
+  input, select, button {
+    max-width: 100%;
+  }
+
+  button {
+    min-height: 46px;
+  }
+
+  .quick-task-buttons {
+    gap: 7px;
+  }
+
+  .quick-task-buttons button {
+    flex: 1 1 auto;
+  }
 }
