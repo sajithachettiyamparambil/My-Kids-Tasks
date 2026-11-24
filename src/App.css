@@ -1089,3 +1089,41 @@ input::placeholder {
 .approval-card .delete-button {
   margin-left: auto;
 }
+/* Cleaner Parent Page */
+.main-content:has(.children-grid) {
+  gap: 14px;
+}
+
+.main-content:has(.children-grid) > .card {
+  padding: 16px;
+  border-radius: 16px;
+  margin-bottom: 12px;
+}
+
+.main-content:has(.children-grid) .children-grid {
+  gap: 12px;
+}
+
+.main-content:has(.children-grid) .child-card {
+  padding: 12px;
+}
+
+.main-content:has(.children-grid) .task-form {
+  gap: 10px;
+}
+
+.main-content:has(.children-grid) .quick-task-buttons {
+  gap: 7px;
+}
+
+.main-content:has(.children-grid) .approval-card {
+  padding: 12px;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+@media (max-width: 600px) {
+  .main-content:has(.children-grid) > .card {
+    padding: 12px;
+  }
+}
