@@ -715,3 +715,117 @@ input::placeholder {
   top: 50%;
   transform: translate(-50%, -50%);
 }
+
+.winner-celebration {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #253653, #526f9b, #e9eff7);
+  animation: winnerAppear 0.6s ease;
+}
+
+.winner-card {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 650px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 30px 20px;
+  text-align: center;
+  border-radius: 28px;
+  background: white;
+  box-shadow: 0 15px 50px #0005;
+}
+
+.winner-trophy {
+  font-size: 75px;
+  animation: trophyBounce 1s infinite alternate;
+}
+
+.winner-card h1 {
+  color: #253653;
+  font-size: clamp(25px, 6vw, 42px);
+  margin: 10px 0;
+}
+
+.winner-card h2 {
+  color: #b18b32;
+}
+
+.winner-photos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 22px;
+  margin: 25px 0;
+}
+
+.winner-person {
+  text-align: center;
+}
+
+.winner-photo {
+  width: min(65vw, 260px);
+  height: min(65vw, 260px);
+  object-fit: cover;
+  border-radius: 50%;
+  border: 8px solid #d5b875;
+  box-shadow: 0 8px 25px #d5b87588;
+}
+
+.winner-no-photo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #e9eff7;
+  font-size: 100px;
+}
+
+.winner-card button {
+  margin-top: 18px;
+  padding: 14px 35px;
+  border: none;
+  border-radius: 30px;
+  background: #253653;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+@keyframes winnerAppear {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes trophyBounce {
+  from { transform: translateY(0) rotate(-5deg); }
+  to { transform: translateY(-12px) rotate(5deg); }
+}
+.winner-confetti {
+  position: absolute;
+  top: -20px;
+  width: 10px;
+  height: 16px;
+  border-radius: 2px;
+  z-index: 3;
+  pointer-events: none;
+  animation: confettiFall linear infinite;
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-20px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(900deg);
+    opacity: 0.2;
+  }
+}

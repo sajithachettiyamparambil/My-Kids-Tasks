@@ -28,7 +28,14 @@ type StarRecord = {
   stars: number;
   date: string;
 };
-
+type WinnerRecord = {
+  id: string;
+  period: 'weekly' | 'monthly';
+  winners: number[];
+  stars: number;
+  startDate: string;
+  endDate: string;
+};
 const defaultChildren: Child[] = [
   { id: 0, name: 'Iffa mol' },
   { id: 1, name: 'Shamon' },
@@ -56,7 +63,6 @@ function getWeekStart(date: Date) {
   monday.setDate(monday.getDate() - (day === 0 ? 6 : day - 1));
   return dateKey(monday);
 }
-
 function toTime(value: unknown, fallback: string): string {
   if (typeof value !== 'string' || !value) return fallback;
   if (/^\d{2}:\d{2}/.test(value)) return value.slice(0, 5);
@@ -269,9 +275,14 @@ function TimePicker({ label, value, onChange, disabled = false }: {
   const [starHistory, setStarHistory] = useState<StarRecord[]>(
     () => readStorage('kids-star-history', [])
   );
+const [winnerHistory, setWinnerHistory] = useState<WinnerRecord[]>(
+  () => (readStorage('kids-winner-history', []) as WinnerRecord[]).filter(
+    item => item.id !== 'test-weekly'
+  )
+);  const [view, setView] = useState<'kids' | 'parent'>('kids');
 
-  const [view, setView] = useState<'kids' | 'parent'>('kids');
-  const [selectedChild, setSelectedChild] = useState(0);
+const [showWinnerCelebration, setShowWinnerCelebration] = useState(false);
+const [currentWinners, setCurrentWinners] = useState<WinnerRecord | null>(null);  const [selectedChild, setSelectedChild] = useState(0);
   const [taskTitle, setTaskTitle] = useState('');
   const [taskChild, setTaskChild] = useState(0);
   const [taskStart, setTaskStart] = useState('17:00');
@@ -281,10 +292,11 @@ function TimePicker({ label, value, onChange, disabled = false }: {
 const [repeatDays, setRepeatDays] = useState<number[]>([]);
   const [rewardTitle, setRewardTitle] = useState('');
   const [rewardCost, setRewardCost] = useState(5);
-  const [clock, setClock] = useState(() => getClock());
+ 
+ const [clock, setClock] = useState(() => getClock());
  const [currentTime, setCurrentTime] = useState(() => new Date());
   const [today, setToday] = useState(() => dateKey());
-
+const [lastWinnerCheck, setLastWinnerCheck] = useState('');
   function getClock() {
     const now = new Date();
     return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -302,7 +314,48 @@ useEffect(() => {
 
   return () => clearInterval(timer);
 }, []);
-  useEffect(() => {
+ useEffect(() => {
+  const date = new Date();
+  const day = date.getDay();
+  const dateString = today;
+
+  if (lastWinnerCheck === dateString) return;
+
+  // Weekly winners: Monday to Friday
+  if (day === 5) {
+    const start = getWeekStart(date);
+    const winner = calculateWinners(start, dateString, 'weekly');
+
+    if (winner && !winnerHistory.some(item => item.id === `weekly-${dateString}`)) {
+      const savedWinner = { ...winner, id: `weekly-${dateString}` };
+      setWinnerHistory(old => [...old, savedWinner]);
+      setCurrentWinners(savedWinner);
+      setShowWinnerCelebration(true);
+    }
+  }
+
+  // Monthly winners: first to last day
+  const lastDay = new Date(
+    date.getFullYear(),
+    date.getMonth() + 1,
+    0
+  ).getDate();
+
+  if (date.getDate() === lastDay) {
+    const start = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-01`;
+    const winner = calculateWinners(start, dateString, 'monthly');
+
+    if (winner && !winnerHistory.some(item => item.id === `monthly-${dateString}`)) {
+      const savedWinner = { ...winner, id: `monthly-${dateString}` };
+      setWinnerHistory(old => [...old, savedWinner]);
+      setCurrentWinners(savedWinner);
+      setShowWinnerCelebration(true);
+    }
+  }
+
+  setLastWinnerCheck(dateString);
+}, [today]);
+ useEffect(() => {
     localStorage.setItem('kids-photos', JSON.stringify(photos));
   }, [photos]);
 
@@ -321,7 +374,9 @@ useEffect(() => {
   useEffect(() => {
     localStorage.setItem('kids-star-history', JSON.stringify(starHistory));
   }, [starHistory]);
-
+useEffect(() => {
+  localStorage.setItem('kids-winner-history', JSON.stringify(winnerHistory));
+}, [winnerHistory]);
  useEffect(() => {
   const currentDate = new Date();
   const currentDay = currentDate.getDay();
@@ -465,7 +520,35 @@ function getRemainingTime(task: Task) {
 
     return { daily, weekly, monthly };
   }
+ function calculateWinners(
+  startDate: string,
+  endDate: string,
+  period: 'weekly' | 'monthly'
+): WinnerRecord | null {
+  const totals = children.map(child => ({
+    childId: child.id,
+    stars: starHistory
+      .filter(record => {
+        const day = dateKey(new Date(record.date));
+        return record.childId === child.id &&
+          day >= startDate &&
+          day <= endDate;
+      })
+      .reduce((sum, record) => sum + record.stars, 0),
+  }));
 
+  const highest = Math.max(0, ...totals.map(item => item.stars));
+  if (highest === 0) return null;
+
+  return {
+    id: `${startDate}-${endDate}`,
+    period,
+    winners: totals.filter(item => item.stars === highest).map(item => item.childId),
+    stars: highest,
+    startDate,
+    endDate,
+  };
+}
  function addTask(event: FormEvent<HTMLFormElement>) {
   event.preventDefault();
   if (!taskTitle.trim()) return;
@@ -560,7 +643,59 @@ function getRemainingTime(task: Task) {
 
   return (
     <div className="app">
-      <header className="app-header">
+     
+{showWinnerCelebration && currentWinners && (
+  <div className="winner-celebration">
+  {Array.from({ length: 70 }, (_, i) => (
+  <span
+    key={i}
+    className="winner-confetti"
+    style={{
+      left: `${(i * 37) % 100}%`,
+      animationDelay: `${(i % 12) * 0.25}s`,
+      animationDuration: `${3 + (i % 5)}s`,
+      backgroundColor: ['#ff477e', '#ffd166', '#06d6a0', '#4cc9f0', '#9b5de5'][i % 5],
+    }}
+  />
+))}
+  <div className="winner-card">
+      <div className="winner-trophy">🏆</div>
+      <h1>CONGRATULATIONS!</h1>
+      <h2>
+        {currentWinners.period === 'weekly'
+          ? 'Weekly Star Winners!'
+          : 'Monthly Star Winners!'}
+      </h2>
+
+      <div className="winner-photos">
+        {children
+          .filter(child => currentWinners.winners.includes(child.id))
+          .map(child => (
+            <div className="winner-person" key={child.id}>
+              {photos[child.id] ? (
+                <img
+                  src={photos[child.id]}
+                  alt={child.name}
+                  className="winner-photo"
+                />
+              ) : (
+                <div className="winner-photo winner-no-photo">🌟</div>
+              )}
+              <h2>{child.name}</h2>
+            </div>
+          ))}
+      </div>
+
+      <h2>⭐ {currentWinners.stars} Stars! ⭐</h2>
+      <p>You are amazing! Keep shining!</p>
+
+      <button onClick={() => setShowWinnerCelebration(false)}>
+        Celebrate! 🎉
+      </button>
+    </div>
+  </div>
+)}
+ <header className="app-header">
         <div>
           <h1>⭐ Star Rewards</h1>
           <p>Little tasks, big achievements!</p>
@@ -611,7 +746,26 @@ function getRemainingTime(task: Task) {
               </div>
             </div>
           </section>
-
+{winnerHistory.length > 0 && (
+  <section className="card">
+    <h2>🏆 Winner History</h2>
+    {winnerHistory.slice().reverse().map(winner => (
+      <div className="child-card" key={winner.id}>
+        <h3>
+          {winner.period === 'weekly' ? '⭐ Weekly Winner' : '🌟 Monthly Winner'}
+        </h3>
+        <p>
+          {winner.winners
+            .map(id => children.find(child => child.id === id)?.name)
+            .filter(Boolean)
+            .join(' & ')}
+        </p>
+        <p>{winner.stars} ⭐ Stars</p>
+        <small>{winner.startDate} – {winner.endDate}</small>
+      </div>
+    ))}
+  </section>
+)}
           <section className="card">
             <h2>Today's Tasks 📝</h2>
             {childTasks.length === 0 && <p className="empty-message">No tasks added yet. Enjoy your day!</p>}
@@ -674,6 +828,7 @@ function getRemainingTime(task: Task) {
           </section>
         </main>
       )}
+
 
       {view === 'parent' && (
         <main className="main-content">
