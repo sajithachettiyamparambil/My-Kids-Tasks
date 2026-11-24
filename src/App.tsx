@@ -16,8 +16,10 @@ type Task = {
   stars: number;
   doneBy: number[];
   approvedBy: number[];
-  repeatDaily: boolean;
-  taskDate: string;
+repeatType: 'none' | 'daily' | 'weekly' | 'days' | 'monthly';
+repeatDays: number[];
+repeatWeekday: number;
+taskDate: string;
 };
 type Reward = { id: number; title: string; cost: number };
 type StarRecord = {
@@ -46,10 +48,6 @@ function dateKey(date = new Date()): string {
   const m = String(date.getMonth() + 1).padStart(2, '0');
   const d = String(date.getDate()).padStart(2, '0');
   return `${y}-${m}-${d}`;
-}
-
-function isWeekday(date = new Date()) {
-  return date.getDay() !== 0 && date.getDay() !== 6;
 }
 
 function getWeekStart(date: Date) {
@@ -103,9 +101,12 @@ function loadTasks(): Task[] {
       doneBy,
       approvedBy: Array.isArray(item.approvedBy)
         ? item.approvedBy.map(Number) : [],
-      repeatDaily: item.repeatDaily === true,
-      taskDate: item.taskDate || dateKey(),
-    };
+    repeatType: item.repeatType ?? (item.repeatDaily ? 'days' : 'none'),
+repeatDays: Array.isArray(item.repeatDays)
+  ? item.repeatDays.map(Number)
+  : (item.repeatDaily ? [1, 2, 3, 4, 5] : []),
+repeatWeekday: Number(item.repeatWeekday ?? new Date(item.taskDate || dateKey()).getDay()),
+taskDate: item.taskDate || dateKey(),};
   });
 }
 
@@ -166,43 +167,82 @@ function TimePicker({ label, value, onChange, disabled = false }: {
   disabled?: boolean;
 }) {
   const parts = getTimeParts(value);
+  const [stage, setStage] = useState<'hour' | 'minute'>('hour');
+
+  const numbers = stage === 'hour'
+    ? Array.from({ length: 12 }, (_, i) => i === 0 ? 12 : i)
+    : Array.from({ length: 60 }, (_, i) => i);
+
+  function chooseNumber(number: number) {
+    if (stage === 'hour') {
+      onChange(make24HourTime(String(number), parts.minute, parts.period));
+      setStage('minute');
+    } else {
+      onChange(make24HourTime(parts.hour, String(number).padStart(2, '0'), parts.period));
+      setStage('hour');
+    }
+  }
 
   return (
-    <label>
-      {label}
-      <div className="time-picker">
-        <select
-          value={parts.hour}
-          disabled={disabled}
-          onChange={e => onChange(make24HourTime(e.target.value, parts.minute, parts.period))}
-        >
-          {Array.from({ length: 12 }, (_, i) => String(i + 1)).map(h =>
-            <option key={h} value={h}>{h}</option>
-          )}
-        </select>
+    <div className="clock-picker-label">
+      <label>{label}</label>
 
-        <span>:</span>
-
-        <select
-          value={parts.minute}
+      <div className="clock-display">
+        <button type="button" disabled={disabled} onClick={() => setStage('hour')}>
+          {parts.hour}
+        </button>
+        :
+        <button type="button" disabled={disabled} onClick={() => setStage('minute')}>
+          {parts.minute}
+        </button>
+        <button
+          type="button"
+          className="clock-period"
           disabled={disabled}
-          onChange={e => onChange(make24HourTime(parts.hour, e.target.value, parts.period))}
+          onClick={() => onChange(make24HourTime(
+            parts.hour,
+            parts.minute,
+            parts.period === 'AM' ? 'PM' : 'AM'
+          ))}
         >
-          {Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0')).map(m =>
-            <option key={m} value={m}>{m}</option>
-          )}
-        </select>
-
-        <select
-          value={parts.period}
-          disabled={disabled}
-          onChange={e => onChange(make24HourTime(parts.hour, parts.minute, e.target.value))}
-        >
-          <option value="AM">AM</option>
-          <option value="PM">PM</option>
-        </select>
+          {parts.period}
+        </button>
       </div>
-    </label>
+
+      {disabled ? (
+        <p className="clock-instruction">Fixed one-hour duration</p>
+      ) : (
+        <>
+          <p className="clock-instruction">
+            Select {stage === 'hour' ? 'hour' : 'minutes'}
+          </p>
+
+          <div className="clock-face">
+            {numbers.map(number => {
+              const angle = (number / (stage === 'hour' ? 12 : 60)) * Math.PI * 2;
+              const left = 50 + Math.sin(angle) * 40;
+              const top = 50 - Math.cos(angle) * 40;
+              const selected = stage === 'hour'
+                ? Number(parts.hour) === number
+                : Number(parts.minute) === number;
+
+              return (
+                <button
+                  type="button"
+                  key={number}
+                  className={`clock-number ${selected ? 'selected' : ''}`}
+                  style={{ left: `${left}%`, top: `${top}%` }}
+                  onClick={() => chooseNumber(number)}
+                >
+                  {stage === 'minute' ? String(number).padStart(2, '0') : number}
+                </button>
+              );
+            })}
+            <div className="clock-center" />
+          </div>
+        </>
+      )}
+    </div>
   );
 }
  function App() {
@@ -237,7 +277,8 @@ function TimePicker({ label, value, onChange, disabled = false }: {
   const [taskStart, setTaskStart] = useState('17:00');
   const [taskEnd, setTaskEnd] = useState('18:00');
   const [taskStars, setTaskStars] = useState(1);
-  const [repeatDaily, setRepeatDaily] = useState(false);
+  const [repeatType, setRepeatType] = useState<'none' | 'daily' | 'weekly' | 'days' | 'monthly'>('none');
+const [repeatDays, setRepeatDays] = useState<number[]>([]);
   const [rewardTitle, setRewardTitle] = useState('');
   const [rewardCost, setRewardCost] = useState(5);
   const [clock, setClock] = useState(() => getClock());
@@ -252,7 +293,15 @@ function TimePicker({ label, value, onChange, disabled = false }: {
   useEffect(() => {
     localStorage.setItem('kids-children', JSON.stringify(children));
   }, [children]);
+useEffect(() => {
+  const timer = setInterval(() => {
+    setClock(getClock());
+    setCurrentTime(new Date());
+    setToday(dateKey());
+  }, 1000);
 
+  return () => clearInterval(timer);
+}, []);
   useEffect(() => {
     localStorage.setItem('kids-photos', JSON.stringify(photos));
   }, [photos]);
@@ -273,29 +322,36 @@ function TimePicker({ label, value, onChange, disabled = false }: {
     localStorage.setItem('kids-star-history', JSON.stringify(starHistory));
   }, [starHistory]);
 
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setClock(getClock());
-      setCurrentTime(new Date());
-      setToday(dateKey());
-    }, 15000);
-    return () => window.clearInterval(timer);
-  }, []);
+ useEffect(() => {
+  const currentDate = new Date();
+  const currentDay = currentDate.getDay();
+  const currentDayOfMonth = currentDate.getDate();
 
-  // Reset daily task completion on each new weekday.
-  useEffect(() => {
-    if (!isWeekday()) return;
-    setTasks(old => old.map(task => {
-      if (!task.repeatDaily || task.taskDate === today) return task;
-      return {
-        ...task,
-        taskDate: today,
-        doneBy: [],
-        approvedBy: [],
-      };
-    }));
-  }, [today]);
+  setTasks(old => old.map(task => {
+    if (task.taskDate === today) return task;
 
+    let shouldRepeat = false;
+
+    if (task.repeatType === 'daily') {
+      shouldRepeat = true;
+    } else if (task.repeatType === 'weekly') {
+      shouldRepeat = currentDay === task.repeatWeekday;
+    } else if (task.repeatType === 'days') {
+      shouldRepeat = task.repeatDays.includes(currentDay);
+    } else if (task.repeatType === 'monthly') {
+      shouldRepeat = Number(task.taskDate.slice(-2)) === currentDayOfMonth;
+    }
+
+    if (!shouldRepeat) return task;
+
+    return {
+      ...task,
+      taskDate: today,
+      doneBy: [],
+      approvedBy: [],
+    };
+  }));
+}, [today]);
   function isAssigned(task: Task, childId: number) {
     return task.child === 2 || task.child === childId;
   }
@@ -410,27 +466,35 @@ function getRemainingTime(task: Task) {
     return { daily, weekly, monthly };
   }
 
-  function addTask(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!taskTitle.trim()) return;
-
-    setTasks(old => [...old, {
-      id: Date.now(),
-      title: taskTitle.trim(),
-      child: taskChild,
-      start: taskStart,
-      end: taskEnd,
-      stars: taskStars,
-      doneBy: [],
-      approvedBy: [],
-      repeatDaily,
-      taskDate: dateKey(),
-    }]);
-
-    setTaskTitle('');
-    setRepeatDaily(false);
+ function addTask(event: FormEvent<HTMLFormElement>) {
+  event.preventDefault();
+  if (!taskTitle.trim()) return;
+  if (repeatType === 'days' && repeatDays.length === 0) {
+    alert('Please select at least one day.');
+    return;
   }
 
+  const currentDate = new Date();
+
+  setTasks(old => [...old, {
+    id: Date.now(),
+    title: taskTitle.trim(),
+    child: taskChild,
+    start: taskStart,
+    end: taskEnd,
+    stars: taskStars,
+    doneBy: [],
+    approvedBy: [],
+    repeatType,
+    repeatDays,
+    repeatWeekday: currentDate.getDay(),
+    taskDate: dateKey(),
+  }]);
+
+  setTaskTitle('');
+  setRepeatType('none');
+  setRepeatDays([]);
+}
   function setTaskType(type: string) {
     setTaskTitle(type);
     if (type === 'Prayer' || type === 'Homework') {
@@ -470,11 +534,29 @@ function getRemainingTime(task: Task) {
     reader.readAsDataURL(file);
   }
 
-  const childTasks = tasks.filter(task =>
-    isAssigned(task, selectedChild) &&
-    (!task.repeatDaily || isWeekday())
-  );
-  const history = getStarHistory(selectedChild);
+ const childTasks = tasks.filter(task => {
+  if (!isAssigned(task, selectedChild)) return false;
+
+  if (task.repeatType === 'none') {
+    return task.taskDate === today;
+  }
+
+  if (task.repeatType === 'daily') return true;
+
+  if (task.repeatType === 'weekly') {
+    return new Date().getDay() === task.repeatWeekday;
+  }
+
+  if (task.repeatType === 'days') {
+    return task.repeatDays.includes(new Date().getDay());
+  }
+
+  if (task.repeatType === 'monthly') {
+    return new Date().getDate() === Number(task.taskDate.slice(-2));
+  }
+
+  return false;
+}); const history = getStarHistory(selectedChild);
 
   return (
     <div className="app">
@@ -548,7 +630,14 @@ function getRemainingTime(task: Task) {
     ⏱️ {getRemainingTime(task)} left
   </span>
 )}
-                    {task.repeatDaily && <span className="task-status">Daily weekday task</span>}
+                   {task.repeatType !== 'none' && (
+  <span className="task-status">
+    {task.repeatType === 'daily' ? 'Every day' :
+     task.repeatType === 'weekly' ? 'Every week' :
+     task.repeatType === 'monthly' ? 'Every month' :
+     `Repeats: ${task.repeatDays.map(day => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day]).join(', ')}`}
+  </span>
+)}
                     {approved && <span className="task-status">Approved ✓</span>}
                     {done && !approved && <span className="task-status">Waiting for parent approval</span>}
                     {!done && !available && (
@@ -648,41 +737,87 @@ function getRemainingTime(task: Task) {
       }
     }}
   />
+
   <TimePicker
     label="End time"
     value={taskEnd}
     onChange={setTaskEnd}
     disabled={taskTitle === 'Prayer' || taskTitle === 'Homework'}
   />
-</div>              {(taskTitle === 'Prayer' || taskTitle === 'Homework') &&
+</div>
+              {(taskTitle === 'Prayer' || taskTitle === 'Homework') &&
                 <p className="form-note">This task has a fixed one-hour time period.</p>}
               <label>Stars
                 <input type="number" min="1" max="20" value={taskStars}
                   onChange={event => setTaskStars(Number(event.target.value))} />
               </label>
 
-              <label className="repeat-option">
-                <input type="checkbox" checked={repeatDaily}
-                  onChange={event => setRepeatDaily(event.target.checked)} />
-                Repeat every weekday (Monday–Friday)
-              </label>
+             <div className="repeat-option">
+  <label htmlFor="repeatType">Repeat task</label>
+  <select
+    id="repeatType"
+    value={repeatType}
+    onChange={event => setRepeatType(event.target.value as typeof repeatType)}
+  >
+    <option value="none">Does not repeat</option>
+    <option value="daily">Every day</option>
+    <option value="weekly">Every week (same weekday)</option>
+    <option value="days">Select days</option>
+    <option value="monthly">Every month</option>
+  </select>
+</div>
 
+{repeatType === 'days' && (
+  <div className="repeat-option">
+    <strong>Select days:</strong>
+    {[
+      { label: 'Monday', value: 1 },
+      { label: 'Tuesday', value: 2 },
+      { label: 'Wednesday', value: 3 },
+      { label: 'Thursday', value: 4 },
+      { label: 'Friday', value: 5 },
+      { label: 'Saturday', value: 6 },
+      { label: 'Sunday', value: 0 },
+    ].map(day => (
+      <label key={day.value}>
+        <input
+          type="checkbox"
+          checked={repeatDays.includes(day.value)}
+          onChange={event => {
+            setRepeatDays(old =>
+              event.target.checked
+                ? [...old, day.value]
+                : old.filter(value => value !== day.value)
+            );
+          }}
+        />
+        {day.label}
+      </label>
+    ))}
+  </div>
+)}
               <button type="submit">Add Task</button>
             </form>
           </section>
 
           <section className="card">
             <h2>📋 Task Approvals</h2>
-            {tasks.filter(task => !task.repeatDaily || isWeekday()).length === 0 &&
-              <p className="empty-message">No tasks have been added.</p>}
-            {tasks.filter(task => !task.repeatDaily || isWeekday()).map(task => (
+           {tasks.length === 0 &&
+  <p className="empty-message">No tasks have been added.</p>}
+           {tasks.map(task => (
               <div className="approval-card" key={task.id}>
                 <div className="task-info">
                   <h3>{task.title}</h3>
                   <p>{task.child === 2 ? 'Both children' : children[task.child]?.name}
                     {' · '}{task.start}–{task.end} · {task.stars} ⭐</p>
-                  {task.repeatDaily && <span className="task-status">Repeats Monday–Friday</span>}
-                </div>
+                  {task.repeatType !== 'none' && (
+  <span className="task-status">
+    {task.repeatType === 'daily' ? 'Every day' :
+     task.repeatType === 'weekly' ? 'Every week' :
+     task.repeatType === 'monthly' ? 'Every month' :
+     `Selected days: ${task.repeatDays.map(day => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day]).join(', ')}`}
+  </span>
+)}            </div>
                 <div className="approval-actions">
                   {children.filter(child => isAssigned(task, child.id)).map(child => (
                     <div className="approval-child" key={child.id}>

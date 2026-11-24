@@ -3,32 +3,11 @@
   box-sizing: border-box;
 }
 
-:root {
-  color-scheme: dark;
-  --bg: #0b1422;
-  --surface: #142338;
-  --surface-light: #1c3048;
-  --border: #2b4159;
-  --text: #f3f6fa;
-  --muted: #a9bacb;
-  --green: #21a477;
-  --green-light: #b5f0d5;
-  --gold: #f4cf70;
-}
-
-html {
-  min-height: 100%;
-  background: var(--bg);
-}
-
 body {
   margin: 0;
-  min-height: 100vh;
   font-family: 'Trebuchet MS', Arial, sans-serif;
-  background:
-    radial-gradient(circle at top right, #17364a 0, transparent 35%),
-    linear-gradient(145deg, #0b1422, #101e30 55%, #102b32);
-  color: var(--text);
+  background: linear-gradient(135deg, #f8f0ff, #fff0f5, #fff9e9);
+  color: #39314f;
 }
 
 button, input, select {
@@ -37,36 +16,29 @@ button, input, select {
 
 button {
   cursor: pointer;
-  transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 button:hover {
   transform: translateY(-2px);
 }
 
-button:active {
-  transform: scale(0.97);
-}
-
 .app-header {
-  background: linear-gradient(120deg, #102d3b, #176b59, #164b48);
+  background: linear-gradient(120deg, #9274d8, #e69ac7);
   color: white;
-  padding: 28px 18px;
+  padding: 25px 18px;
   text-align: center;
-  border-bottom: 2px solid #b99b4e;
-  border-radius: 0 0 26px 26px;
-  box-shadow: 0 8px 25px #0005;
+  border-radius: 0 0 30px 30px;
+  box-shadow: 0 5px 18px #9274d844;
 }
 
 .app-header h1 {
   margin: 0;
   font-size: 30px;
-  color: #f8dc91;
 }
 
 .app-header p {
   margin: 8px 0 0;
-  color: #d3e9e0;
 }
 
 .main-content {
@@ -75,44 +47,43 @@ button:active {
 }
 
 .card {
-  background: linear-gradient(145deg, #182a40, #132337);
-  border: 1px solid var(--border);
+  background: #ffffffed;
+  border: 1px solid #eee2ff;
   border-radius: 22px;
   padding: 20px;
   margin-bottom: 20px;
-  box-shadow: 0 8px 25px #0003;
+  box-shadow: 0 5px 18px #7861a51a;
 }
 
 h2, h3 {
-  color: var(--green-light);
+  color: #7655b5;
 }
 
 button {
-  border: 1px solid #35536b;
+  border: none;
   border-radius: 13px;
-  padding: 12px 16px;
-  background: #20364e;
-  color: #f3f6fa;
+  padding: 11px 16px;
+  background: #eee5ff;
+  color: #62449e;
   font-weight: bold;
+}
+
+button:active {
+  transform: scale(0.97);
 }
 
 input, select {
   width: 100%;
-  border: 1px solid #3b536b;
+  border: 1px solid #ded1f2;
   border-radius: 12px;
-  padding: 13px;
-  background: #0e1c2d;
-  color: white;
+  padding: 12px;
+  background: white;
+  color: #39314f;
   margin: 5px 0 12px;
 }
 
 input:focus, select:focus {
-  outline: 2px solid var(--green);
-  border-color: var(--green);
-}
-
-input::placeholder {
-  color: #91a4b8;
+  outline: 2px solid #c9aaf5;
 }
 
 .child-selector {
@@ -124,37 +95,25 @@ input::placeholder {
 }
 
 .child-selector button {
-  background: #1b3046;
-  border: 2px solid #38516a;
+  background: #f3eaff;
+  border: 2px solid #e5d4ff;
   border-radius: 18px;
 }
 
 .child-welcome {
   text-align: center;
-  padding: 20px;
-  background: linear-gradient(135deg, #183d40, #19314a);
-  border: 1px solid #38645c;
+  padding: 18px;
+  background: linear-gradient(135deg, #fff0f7, #f1eaff);
   border-radius: 22px;
 }
 
 .child-photo {
-  width: 65px;
-  height: 65px;
-  min-width: 65px;
+  width: 105px;
+  height: 105px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid var(--gold);
-  box-shadow: 0 4px 15px #0005;
-  margin: 0 auto;
-  overflow: hidden;
-}
-
-.child-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-  display: block;
+  border: 5px solid white;
+  box-shadow: 0 4px 15px #9d78bd44;
 }
 
 .children-grid {
@@ -165,8 +124,8 @@ input::placeholder {
 
 .child-card {
   text-align: center;
-  background: linear-gradient(145deg, #20364b, #183044);
-  border: 1px solid #3b5a68;
+  background: linear-gradient(145deg, #fff4f9, #f2edff);
+  border: 1px solid #f0dff4;
   border-radius: 22px;
   padding: 20px;
 }
@@ -177,13 +136,12 @@ input::placeholder {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  background: #1b2d42;
-  border: 1px solid #344c64;
-  border-left: 4px solid var(--green);
-  border-radius: 15px;
-  padding: 12px 14px;
-  margin: 10px 0;
-  min-height: 68px;
+  background: #fffafd;
+  border: 1px solid #f0e3f4;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin: 8px 0;
+  min-height: 65px;
 }
 
 .task-info {
@@ -199,42 +157,45 @@ input::placeholder {
   min-width: 0;
   margin: 0;
   font-size: 15px;
-  color: white;
 }
 
 .task-info p {
   margin: 0;
   white-space: nowrap;
   font-size: 13px;
-  color: var(--muted);
 }
 
 .task-status {
   display: inline-block;
-  background: #4b3d20;
-  color: #ffdf91;
+  background: #fff2d9;
+  color: #986b26;
   border-radius: 20px;
-  padding: 6px 10px;
-  font-size: 12px;
+  padding: 5px 10px;
+  font-size: 13px;
+}.task-status {
+  display: inline-block;
+  background: #fff2d9;
+  color: #986b26;
+  border-radius: 20px;
+  padding: 5px 10px;
+  font-size: 13px;
 }
 
 .task-tick {
-  min-width: 48px;
-  min-height: 48px;
+  min-width: 45px;
+  min-height: 45px;
   border-radius: 50%;
-  background: #176b50;
-  color: #d3ffe8;
-  border: 2px solid #36b989;
+  background: #e5f8e9;
+  color: #31874d;
   font-size: 20px;
 }
 
 .approval-card {
-  background: #302c20;
-  border: 1px solid #88703b;
+  background: #fff8e8;
+  border: 1px solid #f4dfad;
   border-radius: 16px;
   padding: 14px;
   margin: 10px 0;
-  color: #ffe6a5;
 }
 
 .quick-task-buttons {
@@ -245,9 +206,7 @@ input::placeholder {
 }
 
 .quick-task-buttons button {
-  background: #203c43;
-  border-color: #386d62;
-  color: #c5f5df;
+  background: #f1eaff;
   font-size: 13px;
 }
 
@@ -263,31 +222,51 @@ input::placeholder {
 }
 
 .repeat-option {
-  background: #203b42;
-  border: 1px solid #38645c;
+  background: #fff2f8;
   border-radius: 12px;
   padding: 12px;
-  color: #d5f5e7;
 }
 
 .photo-upload {
-  display: inline-flex;
-  flex-direction: column;
-  gap: 8px;
-  cursor: pointer;
-  color: var(--green-light);
-  font-weight: bold;
-  background: #1c3544;
-  border: 1px solid #365c62;
+  background: #f4edff;
   padding: 12px;
   border-radius: 15px;
   margin: 10px 0;
 }
 
-.photo-upload input {
-  max-width: 100%;
-}
+@media (max-width: 600px) {
+  .app-header {
+    padding: 20px 12px;
+  }
 
+  .app-header h1 {
+    font-size: 25px;
+  }
+
+  .main-content {
+    width: calc(100% - 20px);
+    margin: 15px auto;
+  }
+
+  .card {
+    padding: 15px;
+    border-radius: 18px;
+  }
+
+  .time-fields {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .task-card {
+    padding: 12px;
+  }
+
+  .child-photo {
+    width: 90px;
+    height: 90px;
+  }
+}
 .child-selector button {
   display: inline-flex;
   align-items: center;
@@ -296,26 +275,61 @@ input::placeholder {
   min-height: 58px;
   padding: 8px 16px;
   border-radius: 18px;
-  background: #1b3046;
-  border: 2px solid #38516a;
+  background: linear-gradient(135deg, #f4eaff, #fff0f7);
+  border: 2px solid #e5d4ff;
   font-weight: bold;
+}
+
+.child-selector button img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+}
+
+.child-selector button.active {
+  background: linear-gradient(135deg, #d9c5ff, #ffd6e9);
+  border-color: #a985df;
+  box-shadow: 0 4px 12px #a985df44;
+}
+
+.photo-upload {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  color: #7655b5;
+  font-weight: bold;
+}
+
+.photo-upload input {
+  max-width: 100%;
+}
+/* Normal child profile photo size */
+.child-photo {
+  width: 65px;
+  height: 65px;
+  min-width: 65px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.child-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
 }
 
 .child-selector button img {
   width: 38px;
   height: 38px;
-  border-radius: 50%;
   object-fit: cover;
-  border: 2px solid var(--gold);
+  border-radius: 50%;
 }
-
-.child-selector button.active {
-  background: linear-gradient(135deg, #176d55, #204d4b);
-  border-color: var(--gold);
-  box-shadow: 0 4px 15px #0005;
-  color: #fff2c4;
-}
-
 .time-picker {
   display: flex;
   align-items: center;
@@ -327,632 +341,377 @@ input::placeholder {
   flex: 1;
   min-width: 0;
   padding: 12px 8px;
-  border: 1px solid #3b536b;
+  border: 1px solid #e4d7ec;
   border-radius: 10px;
-  background: #0e1c2d;
-  color: white;
+  background: white;
+  color: #302d49;
   font-size: 16px;
 }
-
-@media (max-width: 600px) {
-  body {
-    font-size: 15px;
-  }
-
-  .app-header {
-    padding: 24px 14px;
-    border-radius: 0 0 22px 22px;
-  }
-
-  .app-header h1 {
-    font-size: 25px;
-  }
-
-  .app-header p {
-    font-size: 14px;
-  }
-
-  .main-content {
-    width: calc(100% - 20px);
-    margin: 15px auto;
-  }
-
-  .card {
-    padding: 15px;
-    border-radius: 18px;
-    margin-bottom: 15px;
-  }
-
-  .children-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  .child-card {
-    padding: 14px 8px;
-    border-radius: 17px;
-  }
-
-  .child-selector {
-    gap: 8px;
-  }
-
-  .child-selector button {
-    flex: 1;
-    min-height: 56px;
-    padding: 7px 9px;
-    font-size: 14px;
-  }
-
-  .task-card {
-    padding: 12px 10px;
-    gap: 8px;
-    border-radius: 14px;
-  }
-
-  .task-info {
-    gap: 8px;
-  }
-
-  .task-info h3 {
-    font-size: 14px;
-  }
-
-  .task-info p {
-    font-size: 12px;
-  }
-
-  .task-tick {
-    min-width: 46px;
-    min-height: 46px;
-  }
-
-  .task-status {
-    font-size: 11px;
-    padding: 5px 8px;
-  }
-
-  .time-fields {
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  input, select {
-    min-height: 46px;
-  }
-
-  button {
-    min-height: 44px;
-  }
-
-  .quick-task-buttons button {
-    padding: 10px 12px;
-  }
-
-  .child-photo {
-    width: 65px;
-    height: 65px;
-    min-width: 65px;
-  }
-}
-
-/* Improved phone layout */
-
-@media (max-width: 600px) {
-  html, body {
-    width: 100%;
-    overflow-x: hidden;
-  }
-
-  .app-header {
-    padding: 20px 12px;
-  }
-
-  .app-header h1 {
-    font-size: clamp(21px, 6vw, 26px);
-  }
-
-  .main-content {
-    width: calc(100% - 16px);
-    margin: 12px auto;
-  }
-
-  .card {
-    padding: 13px;
-    margin-bottom: 12px;
-    border-radius: 16px;
-  }
-
-  .children-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 9px;
-  }
-
-  .child-card {
-    min-width: 0;
-    padding: 12px 6px;
-  }
-
-  .child-welcome {
-    padding: 15px 10px;
-  }
-
-  .task-card {
-    width: 100%;
-    min-width: 0;
-    gap: 6px;
-    padding: 10px 8px;
-  }
-
-  .task-info {
-    flex-wrap: wrap;
-    gap: 5px;
-  }
-
-  .task-info h3 {
-    overflow-wrap: anywhere;
-  }
-
-  .task-info p {
-    white-space: normal;
-  }
-
-  .task-tick {
-    flex-shrink: 0;
-    min-width: 44px;
-    min-height: 44px;
-  }
-
-  .task-status {
-    max-width: 100%;
-    overflow-wrap: anywhere;
-  }
-
-  .task-form {
-    min-width: 0;
-  }
-
-  .time-fields {
-    gap: 7px;
-  }
-
-  .time-picker {
-    gap: 4px;
-  }
-
-  .time-picker select {
-    padding: 10px 4px;
-    font-size: 14px;
-  }
-
-  input, select, button {
-    max-width: 100%;
-  }
-
-  button {
-    min-height: 46px;
-  }
-
-  .quick-task-buttons {
-    gap: 7px;
-  }
-
-  .quick-task-buttons button {
-    flex: 1 1 auto;
-  }
-}
-
-/* White and Emerald Green Theme */
-
-:root {
-  color-scheme: light;
-  --bg: #f5faf6;
-  --surface: #ffffff;
-  --surface-light: #edf7f0;
-  --border: #d5e8da;
-  --text: #244333;
-  --muted: #718879;
-  --green: #087f55;
-  --green-light: #176b45;
-  --gold: #d8b765;
-}
-
-html {
-  background: #f5faf6;
-}
-
-body {
-  background:
-    radial-gradient(circle at top right, #e1f2e6 0, transparent 38%),
-    linear-gradient(145deg, #ffffff, #f2faf4);
-  color: #244333;
-}
-
-.app-header {
-  background: linear-gradient(120deg, #075b3e, #0b9363, #176b45);
-  color: white;
-  border-bottom: 3px solid #d8b765;
-}
-
-.app-header h1 {
-  color: #ffffff;
-}
-
-.app-header p {
-  color: #e0f5e8;
-}
-
-.card {
-  background: #ffffff;
-  border-color: #d5e8da;
-  box-shadow: 0 5px 20px #174b3510;
-}
-
-h2, h3 {
-  color: #176b45;
-}
-
-button {
-  background: #087f55;
-  color: white;
-  border-color: #087f55;
-}
-
-button:hover {
-  background: #066b47;
-}
-
-input, select {
-  background: #ffffff;
-  color: #244333;
-  border-color: #c8dfce;
-}
-
-input::placeholder {
-  color: #91a49a;
-}
-
-.child-selector button {
-  background: #edf7f0;
-  color: #176b45;
-  border-color: #c8dfce;
-}
-
-.child-selector button.active {
-  background: linear-gradient(135deg, #087f55, #176b45);
-  color: white;
-  border-color: #d8b765;
-}
-
-.child-welcome {
-  background: linear-gradient(135deg, #e5f5e9, #f4faf5);
-  border-color: #c8dfce;
-}
-
-.children-grid .child-card {
-  background: #ffffff;
-  border-color: #d5e8da;
-}
-
-.task-card {
-  background: #f4faf5;
-  border-color: #d5e8da;
-  border-left-color: #087f55;
-}
-
-.task-info h3 {
-  color: #244333;
-}
-
-.task-info p {
-  color: #718879;
-}
-
-.task-status {
-  background: #fff4d8;
-  color: #795a13;
-}
-
-.task-tick {
-  background: #087f55;
-  color: white;
-  border-color: #38a878;
-}
-
-.approval-card {
-  background: #f0f8f1;
-  border-color: #b9d9c1;
-  color: #24583a;
-}
-
-.quick-task-buttons button {
-  background: #e8f5ed;
-  border-color: #b9d9c1;
-  color: #176b45;
-}
-
-.repeat-option {
-  background: #edf7f0;
-  border-color: #c8dfce;
-  color: #24583a;
-}
-
-.photo-upload {
-  background: #edf7f0;
-  border-color: #c8dfce;
-  color: #087f55;
-}
-
-.time-picker select {
-  background: #ffffff;
-  color: #244333;
-  border-color: #c8dfce;
-}
-
-/* Dark Navy Blue + White Theme */
-
-:root {
-  color-scheme: light;
-  --bg: #f3f6fa;
-  --surface: #ffffff;
-  --surface-light: #eaf0f7;
-  --border: #d5deea;
-  --text: #20334d;
-  --muted: #687b92;
-  --green: #173b63;
-  --green-light: #173b63;
-  --gold: #c7d5e6;
-}
-
-html {
-  background: #f3f6fa;
-}
-
-body {
-  background: linear-gradient(145deg, #ffffff, #edf2f8);
+/* Round Clock Time Picker */
+.clock-picker-label {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   color: #20334d;
+  font-weight: 600;
 }
 
-.app-header {
-  background: linear-gradient(120deg, #10243d, #1b4168);
-  color: white;
-  border-bottom: 3px solid #b9c9dc;
+.clock-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px;
+  background: #eaf0f7;
+  border: 1px solid #cbd7e5;
+  border-radius: 14px;
 }
 
-.app-header h1,
-.app-header p {
-  color: white;
-}
-
-.card,
-.child-card {
-  background: #ffffff;
-  border-color: #d5deea;
-  box-shadow: 0 5px 18px #10243d12;
-}
-
-h2, h3 {
+.clock-display button {
+  min-width: 48px;
+  padding: 9px;
+  border-radius: 9px;
+  background: white;
   color: #173b63;
+  border: 1px solid #cbd7e5;
+  font-size: 20px;
+  font-weight: bold;
 }
 
-button {
+.clock-display button.clock-selected {
+  background: #173b63;
+  color: white;
+}
+
+.clock-display .clock-period {
+  min-width: 55px;
+  font-size: 15px;
+}
+
+.clock-face {
+  width: 260px;
+  height: 260px;
+  max-width: 100%;
+  margin: 8px auto;
+  position: relative;
+  border-radius: 50%;
+  background: #eaf0f7;
+  border: 5px solid #173b63;
+  box-shadow: inset 0 0 12px #173b6320;
+}
+
+.clock-number {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  min-height: 22px;
+  padding: 0;
+  border-radius: 50%;
+  background: white;
+  color: #173b63;
+  border: 1px solid #b9c9dc;
+  font-size: 10px;
+  line-height: 1;
+  z-index: 1;
+}
+
+.clock-number.active {
   background: #173b63;
   color: white;
   border-color: #173b63;
 }
 
-button:hover {
-  background: #102b49;
+.clock-center {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #173b63;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
-input, select {
+.clock-instruction {
+  text-align: center;
+  color: #687b92;
+  font-size: 13px;
+  margin: 2px 0 8px;
+}
+
+@media (max-width: 600px) {
+  .clock-face {
+    width: 240px;
+    height: 240px;
+  }
+}
+
+/* ROYAL BLUE THEME */
+:root {
+  --bg: #e9eff7;
+  --surface: #ffffff;
+  --surface-light: #dce6f2;
+  --border: #c5d3e4;
+  --text: #253653;
+  --muted: #718198;
+  --green: #253653;
+  --green-light: #36577f;
+  --gold: #d5b875;
+}
+
+html,
+body {
+  background: #e9eff7;
+  color: #253653;
+}
+
+body {
+  background: linear-gradient(145deg, #ffffff, #e9eff7);
+}
+
+.app-header {
+  background: linear-gradient(120deg, #1c2d49, #36577f);
+  color: #ffffff;
+  border-bottom: 3px solid #d5b875;
+}
+
+.app-header h1,
+.app-header p {
+  color: #ffffff;
+}
+
+.card,
+.child-card {
   background: #ffffff;
-  color: #20334d;
-  border-color: #cbd7e5;
+  border-color: #c5d3e4;
+  box-shadow: 0 5px 18px #25365312;
+}
+
+h2,
+h3 {
+  color: #253653;
+}
+
+button {
+  background: #253653;
+  color: #ffffff;
+  border-color: #253653;
+}
+
+button:hover {
+  background: #1c2d49;
+}
+
+input,
+select {
+  background: #ffffff;
+  color: #253653;
+  border-color: #c5d3e4;
 }
 
 input::placeholder {
-  color: #8493a6;
+  color: #8998ac;
 }
 
 .child-selector button {
-  background: #eaf0f7;
-  color: #173b63;
-  border-color: #cbd7e5;
+  background: #e9eff7;
+  color: #253653;
+  border-color: #c5d3e4;
 }
 
 .child-selector button.active {
-  background: #173b63;
-  color: white;
-  border-color: #9fb4cc;
+  background: #253653;
+  color: #ffffff;
+  border-color: #d5b875;
 }
 
 .child-welcome {
-  background: linear-gradient(135deg, #eaf0f7, #ffffff);
-  border-color: #cbd7e5;
+  background: linear-gradient(135deg, #e9eff7, #ffffff);
+  border-color: #c5d3e4;
 }
 
 .task-card {
   background: #edf2f8;
-  border-color: #d5deea;
-  border-left-color: #173b63;
+  border-color: #c5d3e4;
+  border-left-color: #36577f;
 }
 
 .task-info h3 {
-  color: #20334d;
+  color: #253653;
 }
 
 .task-info p {
-  color: #687b92;
+  color: #718198;
 }
 
 .task-status {
-  background: #e1e9f2;
-  color: #173b63;
+  background: #dce6f2;
+  color: #253653;
 }
 
 .task-tick {
-  background: #173b63;
-  color: white;
-  border-color: #54769b;
+  background: #253653;
+  color: #ffffff;
+  border-color: #718eaf;
 }
 
 .approval-card {
   background: #edf2f8;
-  border-color: #cbd7e5;
-  color: #20334d;
+  border-color: #c5d3e4;
+  color: #253653;
 }
 
 .quick-task-buttons button,
 .repeat-option,
 .photo-upload {
-  background: #eaf0f7;
-  border-color: #cbd7e5;
-  color: #173b63;
+  background: #e9eff7;
+  border-color: #c5d3e4;
+  color: #253653;
 }
 
-.time-picker select {
-  background: #ffffff;
-  color: #20334d;
-  border-color: #cbd7e5;
+/* Clock colours */
+.clock-display {
+  background: #e9eff7;
+  border-color: #c5d3e4;
 }
 
-/* Final mobile layout */
+.clock-display button {
+  color: #253653;
+  border-color: #c5d3e4;
+}
 
+.clock-display button.clock-selected,
+.clock-number.active {
+  background: #253653;
+  color: #ffffff;
+}
+
+.clock-face {
+  background: #e9eff7;
+  border-color: #253653;
+}
+
+.clock-number {
+  color: #253653;
+  border-color: #c5d3e4;
+}
+
+.clock-center {
+  background: #d5b875;
+}
+
+.clock-instruction {
+  color: #718198;
+}
+
+/* Phone-friendly clock */
 @media (max-width: 600px) {
-  html, body {
-    width: 100%;
-    overflow-x: hidden;
-  }
-
-  .app-header {
-    padding: 18px 12px;
-    border-radius: 0 0 18px 18px;
-  }
-
-  .app-header h1 {
-    font-size: 23px;
-    line-height: 1.3;
-  }
-
-  .app-header p {
-    font-size: 13px;
-  }
-
-  .main-content {
-    width: calc(100% - 16px);
+  .clock-face {
+    width: 270px;
+    height: 270px;
+    max-width: 100%;
     margin: 12px auto;
   }
 
-  .card {
-    padding: 13px;
-    margin-bottom: 12px;
-    border-radius: 16px;
-  }
-
-  .children-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 9px;
-  }
-
-  .child-card {
-    min-width: 0;
-    padding: 12px 6px;
-    overflow-wrap: anywhere;
-  }
-
-  .child-welcome {
-    padding: 15px 10px;
-  }
-
-  .child-selector {
-    gap: 7px;
-  }
-
-  .child-selector button {
-    flex: 1;
-    min-width: 0;
-    padding: 7px 5px;
-    font-size: 13px;
-  }
-
-  .task-card {
-    padding: 10px 8px;
-    gap: 7px;
-    min-width: 0;
-  }
-
-  .task-info {
-    flex: 1;
-    min-width: 0;
-    flex-wrap: wrap;
-    gap: 5px;
-  }
-
-  .task-info h3 {
-    font-size: 14px;
-    overflow-wrap: anywhere;
-  }
-
-  .task-info p {
+  .clock-number {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
     font-size: 12px;
-    white-space: normal;
   }
 
-  .task-tick {
-    flex-shrink: 0;
-    width: 46px;
-    height: 46px;
-    min-width: 46px;
-    min-height: 46px;
+  .clock-display button {
+    min-width: 54px;
+    min-height: 48px;
+    font-size: 20px;
   }
 
-  .task-status {
-    max-width: 100%;
-    overflow-wrap: anywhere;
+  .clock-display .clock-period {
+    min-width: 58px;
+    font-size: 15px;
   }
+}
 
-  .task-form {
-    min-width: 0;
-  }
 
-  .time-fields {
-    grid-template-columns: 1fr 1fr;
-    gap: 7px;
-  }
+.clock-picker-label {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
 
-  .time-picker {
-    gap: 4px;
-  }
+.clock-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 28px;
+  font-weight: bold;
+}
 
-  .time-picker select {
-    min-width: 0;
-    padding: 10px 3px;
-    font-size: 14px;
-  }
+.clock-display button {
+  border: none;
+  border-radius: 10px;
+  padding: 8px 14px;
+  background: #e9eff7;
+  color: #253653;
+  font-size: 28px;
+  font-weight: bold;
+}
 
-  input, select {
-    min-height: 46px;
-    font-size: 16px;
-  }
+.clock-display .clock-period {
+  font-size: 18px;
+  background: #253653;
+  color: white;
+}
 
-  button {
-    min-height: 46px;
-  }
+.clock-instruction {
+  text-align: center;
+  color: #253653;
+  font-size: 14px;
+  margin: 4px 0;
+}
 
-  .quick-task-buttons {
-    gap: 7px;
-  }
+.clock-face {
+  width: 260px;
+  height: 260px;
+  max-width: 100%;
+  position: relative;
+  border-radius: 50%;
+  background: #e9eff7;
+  border: 5px solid #253653;
+  margin: 8px auto 20px;
+}
 
-  .quick-task-buttons button {
-    flex: 1 1 auto;
-  }
+.clock-number {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #253653;
+  font-weight: bold;
+  font-size: 13px;
+  z-index: 1;
+}
 
-  .approval-card {
-    padding: 12px;
-  }
+.clock-number.selected {
+  background: #253653;
+  color: white;
+}
 
-  .photo-upload {
-    max-width: 100%;
-  }
+.clock-center {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #253653;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
