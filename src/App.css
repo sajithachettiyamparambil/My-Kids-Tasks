@@ -1051,3 +1051,41 @@ input::placeholder {
   }
 }
 
+/* Clean Parent Task Approval Cards */
+.approval-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+}
+
+.approval-card .task-info h3 {
+  margin: 0 0 5px;
+  font-size: 15px;
+}
+
+.approval-card .task-info p {
+  margin: 0;
+  font-size: 12px;
+}
+
+.approval-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.approval-child {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.approval-card .delete-button {
+  margin-left: auto;
+}
