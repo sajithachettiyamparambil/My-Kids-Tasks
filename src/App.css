@@ -986,3 +986,68 @@ input::placeholder {
     align-items: stretch;
   }
 }
+
+/* Compact single-row task cards */
+.task-card-compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px;
+  min-width: 0;
+}
+
+.task-info-compact {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.task-info-compact h3 {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.task-info-compact p {
+  margin: 0;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.task-info-compact .task-status {
+  font-size: 11px;
+}
+
+.task-card-compact .task-tick {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .task-card-compact {
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .task-info-compact {
+    gap: 5px;
+  }
+
+  .task-info-compact h3 {
+    font-size: 13px;
+  }
+
+  .task-info-compact p {
+    font-size: 10px;
+  }
+}
+

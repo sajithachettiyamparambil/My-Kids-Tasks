@@ -319,8 +319,7 @@ const [repeatDays, setRepeatDays] = useState<number[]>([]);
   const [rewardCost, setRewardCost] = useState(5);
  
  const [clock, setClock] = useState(() => getClock());
- const [currentTime, setCurrentTime] = useState(() => new Date());
-  const [today, setToday] = useState(() => dateKey());
+ const [, setCurrentTime] = useState(() => new Date());  const [today, setToday] = useState(() => dateKey());
 const [lastWinnerCheck, setLastWinnerCheck] = useState('');
   function getClock() {
     const now = new Date();
@@ -448,18 +447,6 @@ useEffect(() => {
   return clock >= task.start && clock < task.end;
 }
 
-function getRemainingTime(task: Task) {
-  const [hours, minutes] = task.end.split(':').map(Number);
-  const endTime = new Date(currentTime);
-  endTime.setHours(hours, minutes, 0, 0);
-
-  const remaining = Math.max(0, endTime.getTime() - currentTime.getTime());
-  const totalSeconds = Math.floor(remaining / 1000);
-  const mins = Math.floor(totalSeconds / 60);
-  const secs = totalSeconds % 60;
-
-  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-}
   function markDone(task: Task, childId: number) {
   if (!isWithinTime(task) || isDone(task, childId)) return;
 
@@ -791,52 +778,65 @@ function getRemainingTime(task: Task) {
     ))}
   </section>
 )}
-          <section className="card">
-            <h2>Today's Tasks 📝</h2>
-            {childTasks.length === 0 && <p className="empty-message">No tasks added yet. Enjoy your day!</p>}
-            {childTasks.map(task => {
-              const done = isDone(task, selectedChild);
-              const approved = isApproved(task, selectedChild);
-              const available = isWithinTime(task);
+        
+<section className="card">
+  <h2>Today's Tasks 📝</h2>
 
-              return (
-                <div className="task-card" key={task.id}>
-                  <div className="task-info">
-                    <h3>{task.title}</h3>
-                    <p>{task.start} – {task.end} · {task.stars} ⭐</p>
-{!done && available && (
-  <span className="task-status">
-    ⏱️ {getRemainingTime(task)} left
-  </span>
-)}
-                   {task.repeatType !== 'none' && (
-  <span className="task-status">
-    {task.repeatType === 'daily' ? 'Every day' :
-     task.repeatType === 'weekly' ? 'Every week' :
-     task.repeatType === 'monthly' ? 'Every month' :
-     `Repeats: ${task.repeatDays.map(day => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day]).join(', ')}`}
-  </span>
-)}
-                    {approved && <span className="task-status">Approved ✓</span>}
-                    {done && !approved && <span className="task-status">Waiting for parent approval</span>}
-                    {!done && !available && (
-                      <span className="task-status">
-                        {clock < task.start ? `Starts at ${task.start}` : 'Time is over'}
-                      </span>
-                    )}
-                  </div>
-                  <button type="button"
-                    className={`task-tick ${done ? 'checked' : ''}`}
-                    disabled={done || !available}
-                    onClick={() => markDone(task, selectedChild)}
-                    aria-label="Mark task as done">
-                    {done ? '✓' : '☐'}
-                  </button>
-                </div>
-              );
-            })}
-          </section>
+  {childTasks.length === 0 && (
+    <p className="empty-message">No tasks added yet. Enjoy your day!</p>
+  )}
 
+  {childTasks.map(task => {
+    const done = isDone(task, selectedChild);
+    const approved = isApproved(task, selectedChild);
+    const available = isWithinTime(task);
+
+    const [startHour, startMinute] = task.start.split(':').map(Number);
+    const [endHour, endMinute] = task.end.split(':').map(Number);
+
+    let duration = (endHour * 60 + endMinute) -
+                   (startHour * 60 + startMinute);
+
+    if (duration < 0) duration += 1440;
+
+    return (
+      <div className="task-card task-card-compact" key={task.id}>
+        <div className="task-info task-info-compact">
+          <h3>{task.title}</h3>
+          <p>
+            {task.start} – {task.end} · {duration} min
+          </p>
+
+          {approved && (
+            <span className="task-status">Approved ✓</span>
+          )}
+
+          {done && !approved && (
+            <span className="task-status">Waiting for approval</span>
+          )}
+
+          {!done && !available && (
+            <span className="task-status">
+              {clock < task.start
+                ? `Starts at ${task.start}`
+                : "Time's up!"}
+            </span>
+          )}
+        </div>
+
+        <button
+          type="button"
+          className={`task-tick ${done ? 'checked' : ''}`}
+          disabled={done || !available}
+          onClick={() => markDone(task, selectedChild)}
+          aria-label="Mark task as done"
+        >
+          {done ? '✓' : '☐'}
+        </button>
+      </div>
+    );
+  })}
+</section>
           <section className="card">
             <h2>🎁 My Rewards</h2>
             {rewards.length === 0 && <p className="empty-message">Your rewards will appear here.</p>}
