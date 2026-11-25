@@ -1187,7 +1187,7 @@ input::placeholder {
 }
 
 .main-content > .daily-checkin {
-  order: 99;
+  order: 2;
 }
 
 /* Bigger task names, smaller time details */
