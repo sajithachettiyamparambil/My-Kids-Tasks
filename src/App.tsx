@@ -895,59 +895,7 @@ function updateCheckIn(
     ))}
   </section>
 )}
- <section className="card daily-checkin">
-  <h2>💖 How Was My Day?</h2>
-  <p>Answer honestly. Your feelings matter!</p>
-
-  <label>1. Did you shout at your sibling?</label>
-  <select value={checkIns.find(item => item.childId === selectedChild && item.date === today)?.shouted ?? ''} onChange={e => updateCheckIn('shouted', e.target.value)}>
-    <option value="">Choose an answer</option>
-    <option>Yes</option>
-    <option>No</option>
-    <option>Sometimes</option>
-  </select>
-
-  <label>2. Did you speak kindly to your siblings?</label>
-  <select value={checkIns.find(item => item.childId === selectedChild && item.date === today)?.kindWords ?? ''} onChange={e => updateCheckIn('kindWords', e.target.value)}>
-    <option value="">Choose an answer</option>
-    <option>Yes</option>
-    <option>No</option>
-    <option>Sometimes</option>
-  </select>
-
-  <label>3. Are you happy today?</label>
-  <select value={checkIns.find(item => item.childId === selectedChild && item.date === today)?.mood ?? ''} onChange={e => updateCheckIn('mood', e.target.value)}>
-    <option value="">Choose an answer</option>
-    <option>Happy 😊</option>
-    <option>Okay 😐</option>
-    <option>Sad 😢</option>
-  </select>
-
-  <label>4. Do you have any sadness?</label>
-  <select value={checkIns.find(item => item.childId === selectedChild && item.date === today)?.sadness ?? ''} onChange={e => updateCheckIn('sadness', e.target.value)}>
-    <option value="">Choose an answer</option>
-    <option>Yes</option>
-    <option>No</option>
-  </select>
-
-  {checkIns.find(item => item.childId === selectedChild && item.date === today)?.sadness === 'Yes' && (
-    <textarea
-      placeholder="Would you like to tell us what's making you sad?"
-      value={checkIns.find(item => item.childId === selectedChild && item.date === today)?.sadnessNote ?? ''}
-      onChange={e => updateCheckIn('sadnessNote', e.target.value)}
-    />
-  )}
-
-  <label>5. Did you obey your parents today?</label>
-  <select value={checkIns.find(item => item.childId === selectedChild && item.date === today)?.obeyed ?? ''} onChange={e => updateCheckIn('obeyed', e.target.value)}>
-    <option value="">Choose an answer</option>
-    <option>Yes</option>
-    <option>No</option>
-    <option>Sometimes</option>
-  </select>
-
-  <p>💗 Thank you for sharing your feelings!</p>
-</section>   
+    
 <section className="encouragement-card">
   <div className="encouragement-characters">
     <span>🦄</span>
@@ -1014,7 +962,60 @@ function updateCheckIn(
     );
   })}
 </section>
-          <section className="card">
+          <section className="card daily-checkin">
+  <h2>💖 How Was My Day?</h2>
+  <p>Answer honestly. Your feelings matter!</p>
+
+  <label>1. Did you shout at your sibling?</label>
+  <select value={checkIns.find(item => item.childId === selectedChild && item.date === today)?.shouted ?? ''} onChange={e => updateCheckIn('shouted', e.target.value)}>
+    <option value="">Choose an answer</option>
+    <option>Yes</option>
+    <option>No</option>
+    <option>Sometimes</option>
+  </select>
+
+  <label>2. Did you speak kindly to your siblings?</label>
+  <select value={checkIns.find(item => item.childId === selectedChild && item.date === today)?.kindWords ?? ''} onChange={e => updateCheckIn('kindWords', e.target.value)}>
+    <option value="">Choose an answer</option>
+    <option>Yes</option>
+    <option>No</option>
+    <option>Sometimes</option>
+  </select>
+
+  <label>3. Are you happy today?</label>
+  <select value={checkIns.find(item => item.childId === selectedChild && item.date === today)?.mood ?? ''} onChange={e => updateCheckIn('mood', e.target.value)}>
+    <option value="">Choose an answer</option>
+    <option>Happy 😊</option>
+    <option>Okay 😐</option>
+    <option>Sad 😢</option>
+  </select>
+
+  <label>4. Do you have any sadness?</label>
+  <select value={checkIns.find(item => item.childId === selectedChild && item.date === today)?.sadness ?? ''} onChange={e => updateCheckIn('sadness', e.target.value)}>
+    <option value="">Choose an answer</option>
+    <option>Yes</option>
+    <option>No</option>
+  </select>
+
+  {checkIns.find(item => item.childId === selectedChild && item.date === today)?.sadness === 'Yes' && (
+    <textarea
+      placeholder="Would you like to tell us what's making you sad?"
+      value={checkIns.find(item => item.childId === selectedChild && item.date === today)?.sadnessNote ?? ''}
+      onChange={e => updateCheckIn('sadnessNote', e.target.value)}
+    />
+  )}
+
+  <label>5. Did you obey your parents today?</label>
+  <select value={checkIns.find(item => item.childId === selectedChild && item.date === today)?.obeyed ?? ''} onChange={e => updateCheckIn('obeyed', e.target.value)}>
+    <option value="">Choose an answer</option>
+    <option>Yes</option>
+    <option>No</option>
+    <option>Sometimes</option>
+  </select>
+
+  <p>💗 Thank you for sharing your feelings!</p>
+</section>
+<section className="card">
             <h2>🎁 My Rewards</h2>
             {rewards.length === 0 && <p className="empty-message">Your rewards will appear here.</p>}
             {rewards.map(reward => (
