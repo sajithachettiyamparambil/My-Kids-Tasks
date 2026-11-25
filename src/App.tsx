@@ -912,7 +912,17 @@ function updateCheckIn(
   </select>
 
   <p>💗 Thank you for sharing your feelings!</p>
-</section>       
+</section>   
+<section className="encouragement-card">
+  <div className="encouragement-characters">
+    <span>🦄</span>
+    <span>🐰</span>
+    <span>⭐</span>
+  </div>
+  <h2>You Can Do It! 💜</h2>
+  <p>Every little task makes you a superstar!</p>
+  <p>Keep trying, keep smiling and keep shining! 🌈</p>
+</section>    
 <section className="card">
   <h2>Today's Tasks 📝</h2>
 

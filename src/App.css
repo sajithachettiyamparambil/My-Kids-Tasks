@@ -1179,3 +1179,309 @@ input::placeholder {
     padding: 14px;
   }
 }
+
+/* Improved task cards and questionnaire position */
+.main-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content > .daily-checkin {
+  order: 99;
+}
+
+/* Bigger task names, smaller time details */
+.task-info-compact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 5px;
+}
+
+.task-info-compact h3 {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.task-info-compact p {
+  font-size: 11px;
+  color: #8190a5;
+  line-height: 1.3;
+}
+
+@media (max-width: 600px) {
+  .task-info-compact h3 {
+    font-size: 16px;
+  }
+
+  .task-info-compact p {
+    font-size: 10px;
+  }
+}
+/* PASTEL DREAM THEME */
+:root {
+  --bg: #fbf5ff;
+  --surface: #ffffff;
+  --surface-light: #f5eaff;
+  --border: #ead8f7;
+  --text: #49375d;
+  --muted: #9a89aa;
+  --green: #9873c8;
+  --green-light: #e9dafa;
+  --gold: #f3c96b;
+}
+
+html,
+body {
+  background: #fbf5ff;
+  color: #49375d;
+}
+
+body {
+  background: linear-gradient(145deg, #fffaff, #f8efff, #fff1f7);
+}
+
+.app-header {
+  background: linear-gradient(120deg, #9b7bd1, #e8a6cc);
+  border-bottom: 3px solid #f4d4e8;
+}
+
+.card,
+.child-card {
+  background: #fffaff;
+  border-color: #ead8f7;
+  box-shadow: 0 5px 18px #a985c51a;
+}
+
+h2,
+h3 {
+  color: #805ba9;
+}
+
+button {
+  background: #e9dafa;
+  color: #68468d;
+}
+
+button:hover {
+  background: #dcc5f3;
+}
+
+input,
+select,
+textarea {
+  background: #ffffff;
+  color: #49375d;
+  border-color: #e4d2f0;
+}
+
+.child-selector button {
+  background: #f5eaff;
+  color: #68468d;
+  border-color: #e4d2f0;
+}
+
+.child-selector button.active {
+  background: linear-gradient(135deg, #cdb3f0, #f5cce2);
+  color: #563875;
+  border-color: #a985d0;
+}
+
+.child-welcome {
+  background: linear-gradient(135deg, #fff0f7, #f1e8ff);
+}
+
+.task-card {
+  background: #fff5fb;
+  border-color: #efdced;
+  border-left: 4px solid #c39be5;
+  border-radius: 16px;
+}
+
+.task-info h3 {
+  color: #68468d;
+}
+
+.task-info p {
+  color: #a08eac;
+}
+
+.task-status {
+  background: #f8e8c9;
+  color: #926b32;
+}
+
+.task-tick {
+  background: #e9dafa;
+  color: #68468d;
+}
+
+.task-tick.checked {
+  background: #d8f2df;
+  color: #398052;
+}
+
+.approval-card {
+  background: #fff5fb;
+  border-color: #efdced;
+}
+
+.quick-task-buttons button,
+.repeat-option,
+.photo-upload {
+  background: #f5eaff;
+  color: #68468d;
+  border-color: #ead8f7;
+}
+
+/* Clock */
+.clock-display,
+.clock-face {
+  background: #f5eaff;
+  border-color: #a985d0;
+}
+
+.clock-display button,
+.clock-number {
+  color: #68468d;
+  border-color: #e0cbed;
+}
+
+.clock-display button.clock-selected,
+.clock-number.active,
+.clock-number.selected {
+  background: #9873c8;
+  color: white;
+}
+
+.clock-center {
+  background: #e9a8cd;
+}
+
+.clock-instruction {
+  color: #947eaa;
+}
+
+/* Daily check-in */
+.daily-checkin {
+  background: #fff3f9;
+  border-color: #efd5e7;
+}
+
+.daily-checkin h2 {
+  color: #a45d91;
+}
+
+/* Winner celebration */
+.winner-celebration {
+  background: linear-gradient(135deg, #9873c8, #e8a6cc, #f9e9ff);
+}
+
+.winner-card h1 {
+  color: #68468d;
+}
+
+.winner-photo {
+  border-color: #e9b9d8;
+  box-shadow: 0 8px 25px #e9b9d888;
+}
+
+.winner-card button {
+  background: #9873c8;
+  color: white;
+}
+
+/* Larger task names and smaller times */
+.task-info-compact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 5px;
+}
+
+.task-info-compact h3 {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.task-info-compact p {
+  font-size: 11px;
+  color: #a08eac;
+  line-height: 1.3;
+}
+
+@media (max-width: 600px) {
+  .task-info-compact h3 {
+    font-size: 16px;
+  }
+
+  .task-info-compact p {
+    font-size: 10px;
+  }
+}
+
+/* Cute encouragement card */
+.encouragement-card {
+  text-align: center;
+  margin: 0 0 20px;
+  padding: 20px 14px;
+  border: 1px solid #ead8f7;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #fff0f7, #f0e8ff, #fff9e9);
+  box-shadow: 0 5px 16px #a985c522;
+}
+
+.encouragement-characters {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
+  margin-bottom: 8px;
+}
+
+.encouragement-characters span {
+  display: inline-block;
+  font-size: 38px;
+  animation: encouragementFloat 2s ease-in-out infinite alternate;
+}
+
+.encouragement-characters span:nth-child(2) {
+  animation-delay: .3s;
+}
+
+.encouragement-characters span:nth-child(3) {
+  animation-delay: .6s;
+}
+
+.encouragement-card h2 {
+  margin: 6px 0;
+  color: #805ba9;
+  font-size: 22px;
+}
+
+.encouragement-card p {
+  margin: 6px 0;
+  color: #8e789f;
+  font-size: 14px;
+}
+
+@keyframes encouragementFloat {
+  from { transform: translateY(0); }
+  to { transform: translateY(-6px); }
+}
+
+@media (max-width: 600px) {
+  .encouragement-card {
+    padding: 16px 10px;
+  }
+  .encouragement-characters span {
+    font-size: 34px;
+  }
+  .encouragement-card h2 {
+    font-size: 20px;
+  }
+}
