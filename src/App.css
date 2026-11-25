@@ -1619,3 +1619,89 @@ textarea {
   margin: 4px 0;
   font-weight: 600;
 }
+
+/* =====================================
+   KIDS STAR REWARDS - DARK THEMES
+   ===================================== */
+
+.app.theme-midnight {
+  --theme-bg: #171329;
+  --theme-card: #29213f;
+  --theme-primary: #b49aff;
+  --theme-text: #f1eaff;
+  color-scheme: dark;
+}
+
+.app.theme-ocean {
+  --theme-bg: #10232f;
+  --theme-card: #1c3545;
+  --theme-primary: #62c8e8;
+  --theme-text: #e4f7ff;
+  color-scheme: dark;
+}
+
+.app.theme-forest {
+  --theme-bg: #14251d;
+  --theme-card: #243b2d;
+  --theme-primary: #8bd49a;
+  --theme-text: #e8f8e9;
+  color-scheme: dark;
+}
+
+/* Apply the selected theme throughout the app */
+
+.app[class*="theme-"] {
+  background-color: var(--theme-bg) !important;
+  color: var(--theme-text) !important;
+  min-height: 100vh;
+}
+
+.app[class*="theme-"] .main-content {
+  background-color: transparent !important;
+}
+
+.app[class*="theme-"] .card,
+.app[class*="theme-"] .child-card,
+.app[class*="theme-"] .task-card,
+.app[class*="theme-"] .encouragement-card {
+  background-color: var(--theme-card) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-primary) !important;
+}
+
+.app[class*="theme-"] h1,
+.app[class*="theme-"] h2,
+.app[class*="theme-"] h3,
+.app[class*="theme-"] p,
+.app[class*="theme-"] label {
+  color: var(--theme-text);
+}
+
+.app[class*="theme-"] .theme-options button {
+  background-color: var(--theme-card);
+  color: var(--theme-text);
+  border: 2px solid var(--theme-primary);
+}
+
+.app[class*="theme-"] button:not(.delete-button) {
+  border-color: var(--theme-primary);
+}
+
+.app[class*="theme-"] input,
+.app[class*="theme-"] select,
+.app[class*="theme-"] textarea {
+  border-color: var(--theme-primary);
+}
+
+.app.theme-midnight input,
+.app.theme-midnight select,
+.app.theme-midnight textarea,
+.app.theme-ocean input,
+.app.theme-ocean select,
+.app.theme-ocean textarea,
+.app.theme-forest input,
+.app.theme-forest select,
+.app.theme-forest textarea {
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
+}

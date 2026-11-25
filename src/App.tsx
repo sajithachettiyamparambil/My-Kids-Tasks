@@ -324,12 +324,11 @@ const [checkIns, setCheckIns] = useState<DailyCheckIn[]>(
 );useEffect(() => {
   localStorage.setItem('kids-winner-history', JSON.stringify(winnerHistory));
 }, [winnerHistory]);
- 
-const [view, setView] = useState<'kids' | 'parent'>('kids');
-  const [theme, setTheme] = useState<'dream' | 'bunny' | 'sky' | 'jungle' | 'classic' | 'starry'>(() =>
-    readStorage('kids-app-theme', 'dream')
-  );
-
+ const [view, setView] = useState<'kids' | 'parent'>('kids');
+  const [theme, setTheme] = useState<
+    'dream' | 'bunny' | 'sky' | 'jungle' | 'classic' | 'starry' |
+    'midnight' | 'ocean' | 'forest'
+  >(() => readStorage('kids-app-theme', 'dream'));
   useEffect(() => {
     localStorage.setItem('kids-app-theme', JSON.stringify(theme));
   }, [theme]);
@@ -1037,16 +1036,19 @@ function updateCheckIn(
                <section className="card theme-settings">
             <h2>🎨 Choose App Theme</h2>
             <p>Pick your favourite look!</p>
-            <div className="theme-options">
-              <button onClick={() => setTheme('dream')}>🦄 Dream Magic</button>
-              <button onClick={() => setTheme('bunny')}>🐰 Sweet Bunny</button>
-              <button onClick={() => setTheme('sky')}>☁️ Sky Adventure</button>
-              <button onClick={() => setTheme('jungle')}>🌿 Jungle Fun</button>
-              <button onClick={() => setTheme('classic')}>🌸 Classic Calm</button>
-              <button onClick={() => setTheme('starry')}>🌙 Starry Night</button>
-            </div>
-          </section>   
-  <section className="card">
+          <div className="theme-options">
+  <button onClick={() => setTheme('dream')}>🦄 Dream Magic</button>
+  <button onClick={() => setTheme('bunny')}>🐰 Sweet Bunny</button>
+  <button onClick={() => setTheme('sky')}>☁️ Sky Adventure</button>
+  <button onClick={() => setTheme('jungle')}>🌿 Jungle Fun</button>
+  <button onClick={() => setTheme('classic')}>🌸 Classic Calm</button>
+  <button onClick={() => setTheme('starry')}>🌙 Starry Night</button>
+  <button onClick={() => setTheme('midnight')}>🌌 Midnight Purple</button>
+  <button onClick={() => setTheme('ocean')}>🌊 Deep Ocean</button>
+  <button onClick={() => setTheme('forest')}>🌲 Dark Forest</button>
+</div>
+          </section>
+          <section className="card">
             <h2>👨‍👩‍👧‍👦 Children</h2>
             <div className="children-grid">
               {children.map(child => {
