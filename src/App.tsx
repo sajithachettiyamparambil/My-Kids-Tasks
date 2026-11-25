@@ -291,7 +291,7 @@ function TimePicker({ label, value, onChange, disabled = false }: {
   );
 }
  function App() {
-  const [children] = useState<Child[]>(loadChildren);
+  const [children, setChildren] = useState<Child[]>(loadChildren);
   const [photos, setPhotos] = useState<Record<number, string>>(
     () => readStorage('kids-photos', {})
   );
@@ -1001,7 +1001,19 @@ function updateCheckIn(
                         ? <img src={photos[child.id]} alt={child.name} />
                         : <span>🌟</span>}
                     </div>
-                    <h3>{child.name}</h3>
+                    <div className="child-name-edit">
+  <input
+    value={child.name}
+    onChange={event => setChildren(old =>
+      old.map(item =>
+        item.id === child.id
+          ? { ...item, name: event.target.value }
+          : item
+      )
+    )}
+    placeholder="Child's name"
+  />
+</div>
                     <p>{stars[child.id]} ⭐ stars</p>
                     <p>Today: {childHistory.daily} ⭐</p>
                     <p>This week: {childHistory.weekly} ⭐</p>
