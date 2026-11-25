@@ -16,7 +16,7 @@ type Task = {
   stars: number;
   doneBy: number[];
   approvedBy: number[];
-repeatType: 'none' | 'daily' | 'weekly' | 'days' | 'monthly';
+repeatType: 'none' | 'daily' | 'weekly' |'days' | 'monthly';
 repeatDays: number[];
 repeatWeekday: number;
 taskDate: string;
@@ -326,6 +326,13 @@ const [checkIns, setCheckIns] = useState<DailyCheckIn[]>(
 }, [winnerHistory]);
  
 const [view, setView] = useState<'kids' | 'parent'>('kids');
+  const [theme, setTheme] = useState<'dream' | 'bunny' | 'sky' | 'jungle' | 'classic' | 'starry'>(() =>
+    readStorage('kids-app-theme', 'dream')
+  );
+
+  useEffect(() => {
+    localStorage.setItem('kids-app-theme', JSON.stringify(theme));
+  }, [theme]);
 
 const [showWinnerCelebration, setShowWinnerCelebration] = useState(false);
 const [currentWinners, setCurrentWinners] = useState<WinnerRecord | null>(null);  const [selectedChild, setSelectedChild] = useState(0);
@@ -339,6 +346,7 @@ const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
 const [repeatDays, setRepeatDays] = useState<number[]>([]);
   const [rewardTitle, setRewardTitle] = useState('');
   const [rewardCost, setRewardCost] = useState(5);
+  const [editingRewardId, setEditingRewardId] = useState<number | null>(null);
  
  const [clock, setClock] = useState(() => getClock());
  const [, setCurrentTime] = useState(() => new Date());  const [today, setToday] = useState(() => dateKey());
@@ -656,17 +664,45 @@ function startEditingTask(task: Task) {
   }
 
   function addReward(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!rewardTitle.trim()) return;
+  event.preventDefault();
+  if (!rewardTitle.trim()) return;
+
+  if (editingRewardId !== null) {
+    setRewards(old => old.map(reward =>
+      reward.id === editingRewardId
+        ? { ...reward, title: rewardTitle.trim(), cost: rewardCost }
+        : reward
+    ));
+    setEditingRewardId(null);
+  } else {
     setRewards(old => [...old, {
       id: Date.now(),
       title: rewardTitle.trim(),
       cost: rewardCost,
     }]);
-    setRewardTitle('');
   }
 
-  function redeemReward(reward: Reward) {
+  setRewardTitle('');
+  setRewardCost(5);
+}
+
+function startEditingReward(reward: Reward) {
+  setEditingRewardId(reward.id);
+  setRewardTitle(reward.title);
+  setRewardCost(reward.cost);
+}
+
+function deleteReward(rewardId: number) {
+  if (!window.confirm('Are you sure you want to delete this reward?')) return;
+
+  setRewards(old => old.filter(reward => reward.id !== rewardId));
+
+  if (editingRewardId === rewardId) {
+    setEditingRewardId(null);
+    setRewardTitle('');
+    setRewardCost(5);
+  }
+}  function redeemReward(reward: Reward) {
     if (stars[selectedChild] < reward.cost) return;
     setStars(old => old.map((value, index) =>
       index === selectedChild ? value - reward.cost : value
@@ -736,8 +772,7 @@ function updateCheckIn(
   });
 }
   return (
-    <div className="app">
-     
+    <div className={`app theme-${theme}`}>    
 {showWinnerCelebration && currentWinners && (
   <div className="winner-celebration">
   {Array.from({ length: 70 }, (_, i) => (
@@ -999,7 +1034,19 @@ function updateCheckIn(
 
       {view === 'parent' && (
         <main className="main-content">
-          <section className="card">
+               <section className="card theme-settings">
+            <h2>🎨 Choose App Theme</h2>
+            <p>Pick your favourite look!</p>
+            <div className="theme-options">
+              <button onClick={() => setTheme('dream')}>🦄 Dream Magic</button>
+              <button onClick={() => setTheme('bunny')}>🐰 Sweet Bunny</button>
+              <button onClick={() => setTheme('sky')}>☁️ Sky Adventure</button>
+              <button onClick={() => setTheme('jungle')}>🌿 Jungle Fun</button>
+              <button onClick={() => setTheme('classic')}>🌸 Classic Calm</button>
+              <button onClick={() => setTheme('starry')}>🌙 Starry Night</button>
+            </div>
+          </section>   
+  <section className="card">
             <h2>👨‍👩‍👧‍👦 Children</h2>
             <div className="children-grid">
               {children.map(child => {
@@ -1239,8 +1286,46 @@ function updateCheckIn(
                 <input type="number" min="1" value={rewardCost}
                   onChange={event => setRewardCost(Number(event.target.value))} />
               </label>
-              <button type="submit">Add Reward</button>
+          <button type="submit">
+  {editingRewardId !== null ? 'Save Changes' : 'Add Reward'}
+</button>
+
+{editingRewardId !== null && (
+  <button type="button" onClick={() => {
+    setEditingRewardId(null);
+    setRewardTitle('');
+    setRewardCost(5);
+  }}>
+    Cancel
+  </button>
+)}
             </form>
+{rewards.length > 0 && (
+  <div className="reward-management-list">
+    <h3>Manage Rewards</h3>
+
+    {rewards.map(reward => (
+      <div className="task-card" key={reward.id}>
+        <div className="task-info">
+          <h3>{reward.title}</h3>
+          <p>{reward.cost} ⭐</p>
+        </div>
+
+        <button type="button" onClick={() => startEditingReward(reward)}>
+          Edit ✏️
+        </button>
+
+        <button
+          type="button"
+          className="delete-button"
+          onClick={() => deleteReward(reward.id)}
+        >
+          Delete
+        </button>
+      </div>
+    ))}
+  </div>
+)}
           </section>
         </main>
       )}
