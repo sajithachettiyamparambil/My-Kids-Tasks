@@ -1561,3 +1561,39 @@ textarea {
 .app[class*="theme-"] .theme-options button:hover {
   background: var(--theme-bg);
 }
+/* Apply selected theme throughout the app */
+
+.app[class*="theme-"] {
+  background-color: var(--theme-bg) !important;
+  color: var(--theme-text);
+  min-height: 100vh;
+}
+
+.app[class*="theme-"] .main-content {
+  background-color: transparent;
+}
+
+.app[class*="theme-"] .card,
+.app[class*="theme-"] .child-card,
+.app[class*="theme-"] .task-card,
+.app[class*="theme-"] .encouragement-card {
+  background-color: var(--theme-card) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-primary);
+}
+
+.app[class*="theme-"] h1,
+.app[class*="theme-"] h2,
+.app[class*="theme-"] h3,
+.app[class*="theme-"] p,
+.app[class*="theme-"] label {
+  color: var(--theme-text);
+}
+
+.app[class*="theme-"] button:not(.delete-button) {
+  border-color: var(--theme-primary);
+}
+
+.app[class*="theme-"] button:hover {
+  filter: brightness(0.96);
+}
