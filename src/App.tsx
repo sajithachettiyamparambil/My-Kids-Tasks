@@ -36,6 +36,16 @@ type WinnerRecord = {
   startDate: string;
   endDate: string;
 };
+type DailyCheckIn = {
+  childId: number;
+  date: string;
+  shouted: string;
+  kindWords: string;
+  mood: string;
+  sadness: string;
+  sadnessNote: string;
+  obeyed: string;
+};
 const defaultChildren: Child[] = [
   { id: 0, name: 'Iffa mol' },
   { id: 1, name: 'Shamon' },
@@ -152,7 +162,11 @@ function playTickSound() {
     period: h >= 12 ? 'PM' : 'AM'
   };
 }
-
+function formatTime(value: string) {
+  const [hour, minute] = value.split(':').map(Number);
+  const period = hour >= 12 ? 'PM' : 'AM';
+  return `${hour % 12 || 12}:${String(minute).padStart(2, '0')} ${period}`;
+}
 function make24HourTime(hour: string, minute: string, period: string) {
   let h = Number(hour) % 12;
   if (period === 'PM') h += 12;
@@ -304,11 +318,19 @@ const [winnerHistory, setWinnerHistory] = useState<WinnerRecord[]>(
   () => (readStorage('kids-winner-history', []) as WinnerRecord[]).filter(
     item => item.id !== 'test-weekly'
   )
-);  const [view, setView] = useState<'kids' | 'parent'>('kids');
+); 
+const [checkIns, setCheckIns] = useState<DailyCheckIn[]>(
+  () => readStorage('kids-daily-checkins', [])
+);useEffect(() => {
+  localStorage.setItem('kids-winner-history', JSON.stringify(winnerHistory));
+}, [winnerHistory]);
+ 
+const [view, setView] = useState<'kids' | 'parent'>('kids');
 
 const [showWinnerCelebration, setShowWinnerCelebration] = useState(false);
 const [currentWinners, setCurrentWinners] = useState<WinnerRecord | null>(null);  const [selectedChild, setSelectedChild] = useState(0);
   const [taskTitle, setTaskTitle] = useState('');
+const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
   const [taskChild, setTaskChild] = useState(0);
   const [taskStart, setTaskStart] = useState('17:00');
   const [taskEnd, setTaskEnd] = useState('18:00');
@@ -401,6 +423,9 @@ useEffect(() => {
 useEffect(() => {
   localStorage.setItem('kids-winner-history', JSON.stringify(winnerHistory));
 }, [winnerHistory]);
+useEffect(() => {
+  localStorage.setItem('kids-daily-checkins', JSON.stringify(checkIns));
+}, [checkIns]);
  useEffect(() => {
   const currentDate = new Date();
   const currentDay = currentDate.getDay();
@@ -564,31 +589,61 @@ useEffect(() => {
  function addTask(event: FormEvent<HTMLFormElement>) {
   event.preventDefault();
   if (!taskTitle.trim()) return;
+
   if (repeatType === 'days' && repeatDays.length === 0) {
     alert('Please select at least one day.');
     return;
   }
 
-  const currentDate = new Date();
+  if (editingTaskId !== null) {
+    setTasks(old => old.map(task =>
+      task.id === editingTaskId
+        ? {
+            ...task,
+            title: taskTitle.trim(),
+            child: taskChild,
+            start: taskStart,
+            end: taskEnd,
+            stars: taskStars,
+            repeatType,
+            repeatDays,
+          }
+        : task
+    ));
 
-  setTasks(old => [...old, {
-    id: Date.now(),
-    title: taskTitle.trim(),
-    child: taskChild,
-    start: taskStart,
-    end: taskEnd,
-    stars: taskStars,
-    doneBy: [],
-    approvedBy: [],
-    repeatType,
-    repeatDays,
-    repeatWeekday: currentDate.getDay(),
-    taskDate: dateKey(),
-  }]);
+    setEditingTaskId(null);
+  } else {
+    const currentDate = new Date();
+
+    setTasks(old => [...old, {
+      id: Date.now(),
+      title: taskTitle.trim(),
+      child: taskChild,
+      start: taskStart,
+      end: taskEnd,
+      stars: taskStars,
+      doneBy: [],
+      approvedBy: [],
+      repeatType,
+      repeatDays,
+      repeatWeekday: currentDate.getDay(),
+      taskDate: dateKey(),
+    }]);
+  }
 
   setTaskTitle('');
   setRepeatType('none');
   setRepeatDays([]);
+} 
+function startEditingTask(task: Task) {
+  setEditingTaskId(task.id);
+  setTaskTitle(task.title);
+  setTaskChild(task.child);
+  setTaskStart(task.start);
+  setTaskEnd(task.end);
+  setTaskStars(task.stars);
+  setRepeatType(task.repeatType);
+  setRepeatDays(task.repeatDays ?? []);
 }
   function setTaskType(type: string) {
     setTaskTitle(type);
@@ -652,7 +707,34 @@ useEffect(() => {
 
   return false;
 }); const history = getStarHistory(selectedChild);
+function updateCheckIn(
+  field: keyof Omit<DailyCheckIn, 'childId' | 'date'>,
+  value: string
+) {
+  setCheckIns(old => {
+    const existing = old.find(
+      item => item.childId === selectedChild && item.date === today
+    );
 
+    const answers = existing ?? {
+      childId: selectedChild,
+      date: today,
+      shouted: '',
+      kindWords: '',
+      mood: '',
+      sadness: '',
+      sadnessNote: '',
+      obeyed: '',
+    };
+
+    return [
+      ...old.filter(
+        item => !(item.childId === selectedChild && item.date === today)
+      ),
+      { ...answers, [field]: value },
+    ];
+  });
+}
   return (
     <div className="app">
      
@@ -778,7 +860,59 @@ useEffect(() => {
     ))}
   </section>
 )}
-        
+ <section className="card daily-checkin">
+  <h2>💖 How Was My Day?</h2>
+  <p>Answer honestly. Your feelings matter!</p>
+
+  <label>1. Did you shout at your sibling?</label>
+  <select value={checkIns.find(item => item.childId === selectedChild && item.date === today)?.shouted ?? ''} onChange={e => updateCheckIn('shouted', e.target.value)}>
+    <option value="">Choose an answer</option>
+    <option>Yes</option>
+    <option>No</option>
+    <option>Sometimes</option>
+  </select>
+
+  <label>2. Did you speak kindly to your siblings?</label>
+  <select value={checkIns.find(item => item.childId === selectedChild && item.date === today)?.kindWords ?? ''} onChange={e => updateCheckIn('kindWords', e.target.value)}>
+    <option value="">Choose an answer</option>
+    <option>Yes</option>
+    <option>No</option>
+    <option>Sometimes</option>
+  </select>
+
+  <label>3. Are you happy today?</label>
+  <select value={checkIns.find(item => item.childId === selectedChild && item.date === today)?.mood ?? ''} onChange={e => updateCheckIn('mood', e.target.value)}>
+    <option value="">Choose an answer</option>
+    <option>Happy 😊</option>
+    <option>Okay 😐</option>
+    <option>Sad 😢</option>
+  </select>
+
+  <label>4. Do you have any sadness?</label>
+  <select value={checkIns.find(item => item.childId === selectedChild && item.date === today)?.sadness ?? ''} onChange={e => updateCheckIn('sadness', e.target.value)}>
+    <option value="">Choose an answer</option>
+    <option>Yes</option>
+    <option>No</option>
+  </select>
+
+  {checkIns.find(item => item.childId === selectedChild && item.date === today)?.sadness === 'Yes' && (
+    <textarea
+      placeholder="Would you like to tell us what's making you sad?"
+      value={checkIns.find(item => item.childId === selectedChild && item.date === today)?.sadnessNote ?? ''}
+      onChange={e => updateCheckIn('sadnessNote', e.target.value)}
+    />
+  )}
+
+  <label>5. Did you obey your parents today?</label>
+  <select value={checkIns.find(item => item.childId === selectedChild && item.date === today)?.obeyed ?? ''} onChange={e => updateCheckIn('obeyed', e.target.value)}>
+    <option value="">Choose an answer</option>
+    <option>Yes</option>
+    <option>No</option>
+    <option>Sometimes</option>
+  </select>
+
+  <p>💗 Thank you for sharing your feelings!</p>
+</section>       
 <section className="card">
   <h2>Today's Tasks 📝</h2>
 
@@ -804,8 +938,7 @@ useEffect(() => {
         <div className="task-info task-info-compact">
           <h3>{task.title}</h3>
           <p>
-            {task.start} – {task.end} · {duration} min
-          </p>
+       {formatTime(task.start)} – {formatTime(task.end)} · {duration} min          </p>
 
           {approved && (
             <span className="task-status">Approved ✓</span>
@@ -818,8 +951,7 @@ useEffect(() => {
           {!done && !available && (
             <span className="task-status">
               {clock < task.start
-                ? `Starts at ${task.start}`
-                : "Time's up!"}
+             ? `Starts at ${formatTime(task.start)}`               : "Time's up!"}
             </span>
           )}
         </div>
@@ -883,10 +1015,38 @@ useEffect(() => {
               })}
             </div>
           </section>
-
           <section className="card">
-            <h2>➕ Add a Task</h2>
-            <form onSubmit={addTask} className="task-form">
+            <h2>💖 Children's Daily Check-in</h2>
+
+            {children.map(child => {
+              const answer = checkIns.find(
+                item => item.childId === child.id && item.date === today
+              );
+
+              return (
+                <div className="child-card" key={child.id}>
+                  <h3>{child.name}</h3>
+
+                  {!answer ? (
+                    <p>Not completed yet today.</p>
+                  ) : (
+                    <>
+                      <p>Shouted at sibling: {answer.shouted || 'Not answered'}</p>
+                      <p>Spoke kindly: {answer.kindWords || 'Not answered'}</p>
+                      <p>Today's mood: {answer.mood || 'Not answered'}</p>
+                      <p>Feeling sad: {answer.sadness || 'Not answered'}</p>
+                      {answer.sadnessNote && (
+                        <p>What is making them sad: {answer.sadnessNote}</p>
+                      )}
+                      <p>Obeyed parents: {answer.obeyed || 'Not answered'}</p>
+                    </>
+                  )}
+                </div>
+              );
+            })}
+          </section>
+          <section className="card">
+          <h2>{editingTaskId !== null ? '✏️ Edit Task' : '➕ Add a Task'}</h2>         <form onSubmit={addTask} className="task-form">
               <label>Task name
                 <input value={taskTitle} onChange={event => setTaskTitle(event.target.value)}
                   placeholder="Example: Clean your room" required />
@@ -976,8 +1136,20 @@ useEffect(() => {
     ))}
   </div>
 )}
-              <button type="submit">Add Task</button>
-            </form>
+            <button type="submit">
+  {editingTaskId !== null ? 'Update Task' : 'Add Task'}
+</button>
+{editingTaskId !== null && (
+  <button type="button" onClick={() => {
+    setEditingTaskId(null);
+    setTaskTitle('');
+    setRepeatType('none');
+    setRepeatDays([]);
+  }}>
+    Cancel Edit
+  </button>
+)}
+          </form>
           </section>
 
           <section className="card">
@@ -1023,11 +1195,13 @@ useEffect(() => {
                           : <span>Not completed</span>}
                     </div>
                   ))}
-                  <button className="delete-button"
-                    onClick={() => setTasks(old => old.filter(item => item.id !== task.id))}>
-                    Delete
-                  </button>
-                </div>
+               <button type="button" onClick={() => startEditingTask(task)}>
+  Edit ✏️
+</button>Add a Task
+<button className="delete-button"
+  onClick={() => setTasks(old => old.filter(item => item.id !== task.id))}>
+  Delete
+</button> </div>
               </div>
             ))}
           </section>

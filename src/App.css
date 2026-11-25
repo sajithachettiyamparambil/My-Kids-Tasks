@@ -1127,3 +1127,55 @@ input::placeholder {
     padding: 12px;
   }
 }
+
+/* Kids Daily Check-in */
+.daily-checkin {
+  background: #fff8fc;
+  border: 1px solid #f2d8e8;
+  border-radius: 16px;
+}
+
+.daily-checkin h2 {
+  color: #a34c83;
+  margin-bottom: 8px;
+}
+
+.daily-checkin > p {
+  color: #86677b;
+  font-size: 13px;
+}
+
+.daily-checkin label {
+  display: block;
+  margin-top: 18px;
+  margin-bottom: 7px;
+  font-weight: 600;
+  color: #514052;
+}
+
+.daily-checkin select,
+.daily-checkin textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e5cddd;
+  border-radius: 10px;
+  background: #ffffff;
+  font: inherit;
+}
+
+.daily-checkin textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.daily-checkin select:focus,
+.daily-checkin textarea:focus {
+  outline: 2px solid #dca4c9;
+  border-color: #c47cae;
+}
+
+@media (max-width: 600px) {
+  .daily-checkin {
+    padding: 14px;
+  }
+}
