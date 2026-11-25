@@ -1597,3 +1597,25 @@ textarea {
 .app[class*="theme-"] button:hover {
   filter: brightness(0.96);
 }
+/* Compact Star History */
+.star-history-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.star-history-card {
+  padding: 8px 4px !important;
+  border-radius: 12px;
+  min-width: 0;
+}
+
+.star-history-card h3 {
+  font-size: 11px;
+  margin: 3px 0;
+}
+
+.star-history-card p {
+  font-size: 14px;
+  margin: 4px 0;
+  font-weight: 600;
+}
