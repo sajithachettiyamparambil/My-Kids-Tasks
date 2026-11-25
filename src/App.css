@@ -1597,3 +1597,62 @@ textarea {
 .app[class*="theme-"] button:hover {
   filter: brightness(0.96);
 }
+.star-total {
+  display: inline-block;
+  width: fit-content;
+  padding: 6px 12px;
+  margin-top: 6px;
+  background: #fff1c2;
+  color: #805b00 !important;
+  border: 1px solid #f0d477;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+}
+/* Complete theme styling */
+.app[class*="theme-"] .app-header {
+  background: linear-gradient(120deg, var(--theme-primary), var(--theme-bg)) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-primary);
+}
+
+.app[class*="theme-"] .app-header h1,
+.app[class*="theme-"] .app-header p {
+  color: var(--theme-text) !important;
+}
+
+.app[class*="theme-"] .view-switch button {
+  background: var(--theme-card);
+  color: var(--theme-text);
+  border: 2px solid var(--theme-primary);
+}
+
+.app[class*="theme-"] .view-switch button.active {
+  background: var(--theme-primary);
+  color: white;
+}
+
+.app[class*="theme-"] button {
+  border-color: var(--theme-primary);
+}
+
+.app[class*="theme-"] label,
+.app[class*="theme-"] small,
+.app[class*="theme-"] h1,
+.app[class*="theme-"] h2,
+.app[class*="theme-"] h3,
+.app[class*="theme-"] p {
+  color: var(--theme-text);
+}
+
+.app[class*="theme-"] input,
+.app[class*="theme-"] select,
+.app[class*="theme-"] textarea {
+  border-color: var(--theme-primary);
+}
+
+.app[class*="theme-"] .star-total {
+  background: var(--theme-bg);
+  color: var(--theme-text) !important;
+  border-color: var(--theme-primary);
+}

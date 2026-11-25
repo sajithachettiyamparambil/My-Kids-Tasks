@@ -854,7 +854,7 @@ function updateCheckIn(
             </div>
             <div>
               <h2>Hello, {children[selectedChild].name}! 👋</h2>
-              <p>You have {stars[selectedChild]} ⭐ stars</p>
+              <p className="star-total">? {stars[selectedChild]} stars</p>
             </div>
           </section>
 
@@ -1334,6 +1334,7 @@ function updateCheckIn(
 }
 
 export default App;
+
 
 
 
