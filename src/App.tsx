@@ -16,7 +16,7 @@ type Task = {
   stars: number;
   doneBy: number[];
   approvedBy: number[];
-repeatType: 'none' | 'daily' | 'weekly' | 'days' | 'monthly';
+repeatType: 'none' | 'daily' | 'weekly' |'days' | 'monthly';
 repeatDays: number[];
 repeatWeekday: number;
 taskDate: string;
@@ -291,7 +291,7 @@ function TimePicker({ label, value, onChange, disabled = false }: {
   );
 }
  function App() {
-  const [children] = useState<Child[]>(loadChildren);
+  const [children, setChildren] = useState<Child[]>(loadChildren);
   const [photos, setPhotos] = useState<Record<number, string>>(
     () => readStorage('kids-photos', {})
   );
@@ -326,6 +326,13 @@ const [checkIns, setCheckIns] = useState<DailyCheckIn[]>(
 }, [winnerHistory]);
  
 const [view, setView] = useState<'kids' | 'parent'>('kids');
+  const [theme, setTheme] = useState<'dream' | 'bunny' | 'sky' | 'jungle' | 'classic' | 'starry'>(() =>
+    readStorage('kids-app-theme', 'dream')
+  );
+
+  useEffect(() => {
+    localStorage.setItem('kids-app-theme', JSON.stringify(theme));
+  }, [theme]);
 
 const [showWinnerCelebration, setShowWinnerCelebration] = useState(false);
 const [currentWinners, setCurrentWinners] = useState<WinnerRecord | null>(null);  const [selectedChild, setSelectedChild] = useState(0);
@@ -339,6 +346,7 @@ const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
 const [repeatDays, setRepeatDays] = useState<number[]>([]);
   const [rewardTitle, setRewardTitle] = useState('');
   const [rewardCost, setRewardCost] = useState(5);
+  const [editingRewardId, setEditingRewardId] = useState<number | null>(null);
  
  const [clock, setClock] = useState(() => getClock());
  const [, setCurrentTime] = useState(() => new Date());  const [today, setToday] = useState(() => dateKey());
@@ -656,17 +664,45 @@ function startEditingTask(task: Task) {
   }
 
   function addReward(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!rewardTitle.trim()) return;
+  event.preventDefault();
+  if (!rewardTitle.trim()) return;
+
+  if (editingRewardId !== null) {
+    setRewards(old => old.map(reward =>
+      reward.id === editingRewardId
+        ? { ...reward, title: rewardTitle.trim(), cost: rewardCost }
+        : reward
+    ));
+    setEditingRewardId(null);
+  } else {
     setRewards(old => [...old, {
       id: Date.now(),
       title: rewardTitle.trim(),
       cost: rewardCost,
     }]);
-    setRewardTitle('');
   }
 
-  function redeemReward(reward: Reward) {
+  setRewardTitle('');
+  setRewardCost(5);
+}
+
+function startEditingReward(reward: Reward) {
+  setEditingRewardId(reward.id);
+  setRewardTitle(reward.title);
+  setRewardCost(reward.cost);
+}
+
+function deleteReward(rewardId: number) {
+  if (!window.confirm('Are you sure you want to delete this reward?')) return;
+
+  setRewards(old => old.filter(reward => reward.id !== rewardId));
+
+  if (editingRewardId === rewardId) {
+    setEditingRewardId(null);
+    setRewardTitle('');
+    setRewardCost(5);
+  }
+}  function redeemReward(reward: Reward) {
     if (stars[selectedChild] < reward.cost) return;
     setStars(old => old.map((value, index) =>
       index === selectedChild ? value - reward.cost : value
@@ -736,8 +772,7 @@ function updateCheckIn(
   });
 }
   return (
-    <div className="app">
-     
+    <div className={`app theme-${theme}`}>    
 {showWinnerCelebration && currentWinners && (
   <div className="winner-celebration">
   {Array.from({ length: 70 }, (_, i) => (
@@ -823,23 +858,24 @@ function updateCheckIn(
             </div>
           </section>
 
-         <section className="card">
-  <h2>⭐ My Star History</h2>
-  <div className="children-grid star-history-grid">
-    <div className="child-card star-history-card">
-      <h3>Today</h3>
-      <p>{history.daily} ⭐</p>
-    </div>
-    <div className="child-card star-history-card">
-      <h3>This Week</h3>
-      <p>{history.weekly} ⭐</p>
-    </div>
-    <div className="child-card star-history-card">
-      <h3>This Month</h3>
-      <p>{history.monthly} ⭐</p>
-    </div>
-  </div>
-</section>{winnerHistory.length > 0 && (
+          <section className="card">
+            <h2>⭐ My Star History</h2>
+            <div className="children-grid star-history-grid">
+              <div className="child-card star-history-card">
+                <h3>Today</h3>
+                <p>{history.daily} ⭐</p>
+              </div>
+              <div className="child-card star-history-card">
+                <h3>This Week</h3>
+                <p>{history.weekly} ⭐</p>
+              </div>
+              <div className="child-card star-history-card">
+                <h3>This Month</h3>
+                <p>{history.monthly} ⭐</p>
+              </div>
+            </div>
+          </section>
+{winnerHistory.length > 0 && (
   <section className="card">
     <h2>🏆 Winner History</h2>
     {winnerHistory.slice().reverse().map(winner => (
@@ -911,7 +947,17 @@ function updateCheckIn(
   </select>
 
   <p>💗 Thank you for sharing your feelings!</p>
-</section>       
+</section>   
+<section className="encouragement-card">
+  <div className="encouragement-characters">
+    <span>🦄</span>
+    <span>🐰</span>
+    <span>⭐</span>
+  </div>
+  <h2>You Can Do It! 💜</h2>
+  <p>Every little task makes you a superstar!</p>
+  <p>Keep trying, keep smiling and keep shining! 🌈</p>
+</section>    
 <section className="card">
   <h2>Today's Tasks 📝</h2>
 
@@ -988,7 +1034,19 @@ function updateCheckIn(
 
       {view === 'parent' && (
         <main className="main-content">
-          <section className="card">
+               <section className="card theme-settings">
+            <h2>🎨 Choose App Theme</h2>
+            <p>Pick your favourite look!</p>
+            <div className="theme-options">
+              <button onClick={() => setTheme('dream')}>🦄 Dream Magic</button>
+              <button onClick={() => setTheme('bunny')}>🐰 Sweet Bunny</button>
+              <button onClick={() => setTheme('sky')}>☁️ Sky Adventure</button>
+              <button onClick={() => setTheme('jungle')}>🌿 Jungle Fun</button>
+              <button onClick={() => setTheme('classic')}>🌸 Classic Calm</button>
+              <button onClick={() => setTheme('starry')}>🌙 Starry Night</button>
+            </div>
+          </section>   
+  <section className="card">
             <h2>👨‍👩‍👧‍👦 Children</h2>
             <div className="children-grid">
               {children.map(child => {
@@ -1000,7 +1058,19 @@ function updateCheckIn(
                         ? <img src={photos[child.id]} alt={child.name} />
                         : <span>🌟</span>}
                     </div>
-                    <h3>{child.name}</h3>
+                    <div className="child-name-edit">
+  <input
+    value={child.name}
+    onChange={event => setChildren(old =>
+      old.map(item =>
+        item.id === child.id
+          ? { ...item, name: event.target.value }
+          : item
+      )
+    )}
+    placeholder="Child's name"
+  />
+</div>
                     <p>{stars[child.id]} ⭐ stars</p>
                     <p>Today: {childHistory.daily} ⭐</p>
                     <p>This week: {childHistory.weekly} ⭐</p>
@@ -1045,8 +1115,7 @@ function updateCheckIn(
             })}
           </section>
           <section className="card">
-            <h2>➕ Add a Task</h2>
-            <form onSubmit={addTask} className="task-form">
+          <h2>{editingTaskId !== null ? '✏️ Edit Task' : '➕ Add a Task'}</h2>         <form onSubmit={addTask} className="task-form">
               <label>Task name
                 <input value={taskTitle} onChange={event => setTaskTitle(event.target.value)}
                   placeholder="Example: Clean your room" required />
@@ -1136,8 +1205,20 @@ function updateCheckIn(
     ))}
   </div>
 )}
-              <button type="submit">Add Task</button>
-            </form>
+            <button type="submit">
+  {editingTaskId !== null ? 'Update Task' : 'Add Task'}
+</button>
+{editingTaskId !== null && (
+  <button type="button" onClick={() => {
+    setEditingTaskId(null);
+    setTaskTitle('');
+    setRepeatType('none');
+    setRepeatDays([]);
+  }}>
+    Cancel Edit
+  </button>
+)}
+          </form>
           </section>
 
           <section className="card">
@@ -1183,14 +1264,13 @@ function updateCheckIn(
                           : <span>Not completed</span>}
                     </div>
                   ))}
-<button onClick={() => startEditingTask(task)}>
-  Edit
-</button>
-                  <button className="delete-button"
-                    onClick={() => setTasks(old => old.filter(item => item.id !== task.id))}>
-                    Delete
-                  </button>
-                </div>
+               <button type="button" onClick={() => startEditingTask(task)}>
+  Edit ✏️
+</button>Add a Task
+<button className="delete-button"
+  onClick={() => setTasks(old => old.filter(item => item.id !== task.id))}>
+  Delete
+</button> </div>
               </div>
             ))}
           </section>
@@ -1206,8 +1286,46 @@ function updateCheckIn(
                 <input type="number" min="1" value={rewardCost}
                   onChange={event => setRewardCost(Number(event.target.value))} />
               </label>
-              <button type="submit">Add Reward</button>
+          <button type="submit">
+  {editingRewardId !== null ? 'Save Changes' : 'Add Reward'}
+</button>
+
+{editingRewardId !== null && (
+  <button type="button" onClick={() => {
+    setEditingRewardId(null);
+    setRewardTitle('');
+    setRewardCost(5);
+  }}>
+    Cancel
+  </button>
+)}
             </form>
+{rewards.length > 0 && (
+  <div className="reward-management-list">
+    <h3>Manage Rewards</h3>
+
+    {rewards.map(reward => (
+      <div className="task-card" key={reward.id}>
+        <div className="task-info">
+          <h3>{reward.title}</h3>
+          <p>{reward.cost} ⭐</p>
+        </div>
+
+        <button type="button" onClick={() => startEditingReward(reward)}>
+          Edit ✏️
+        </button>
+
+        <button
+          type="button"
+          className="delete-button"
+          onClick={() => deleteReward(reward.id)}
+        >
+          Delete
+        </button>
+      </div>
+    ))}
+  </div>
+)}
           </section>
         </main>
       )}
@@ -1216,3 +1334,7 @@ function updateCheckIn(
 }
 
 export default App;
+
+
+
+
