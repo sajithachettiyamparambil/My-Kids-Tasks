@@ -1105,16 +1105,16 @@ function updateCheckIn(
     <option>Sometimes</option>
   </select>
 
-  <p>Ã°Å¸â€™â€” Thank you for sharing your feelings!</p>
+  <p>Thank you for sharing your feelings!</p>
 </section>   
 <section className="encouragement-card">
   <div className="activity-pictures">{["cycling","swimming","sleeping","jumping"].map(activity => { const gender = children.find(child => child.id === selectedChild)?.gender; return gender ? <img key={activity} src={"/" + activity + "-" + gender + ".jpg"} alt="" /> : null; })}</div>
-  <h2>You Can Do It! Ã°Å¸â€™Å“</h2>
+  <h2>You Can Do It!</h2>
   <p>Every little task makes you a superstar!</p>
-  <p>Keep trying, keep smiling and keep shining! Ã°Å¸Å’Ë†</p>
+  <p>Keep trying, keep smiling and keep shining!</p>
 </section>    
 <section className="card">
-  <h2>Today's Tasks Ã°Å¸â€œÂ</h2>
+  <h2>Today's Tasks</h2>
 
   {childTasks.length === 0 && (
     <p className="empty-message">No tasks added yet. Enjoy your day!</p>
@@ -1265,8 +1265,8 @@ function updateCheckIn(
           </section>
           </>)}{!showSettings && (<><section className="card">
             <h2>Ã°Å¸â€˜Â¨Ã¢â‚¬ÂÃ°Å¸â€˜Â©Ã¢â‚¬ÂÃ°Å¸â€˜Â§Ã¢â‚¬ÂÃ°Å¸â€˜Â¦ Children</h2>
-            <div className="children-grid">
-              {children.map(child => {
+            <div style={{display:"flex",gap:"16px",justifyContent:"center",flexWrap:"wrap",marginBottom:"16px"}}><div style={{textAlign:"center"}}><img src="/boys/boy-characters.jpg" alt="Boys" style={{width:"120px",height:"95px",objectFit:"contain"}}/><h3>Boys</h3></div><div style={{textAlign:"center"}}><img src="/girl/girl-characters.jpg" alt="Girls" style={{width:"120px",height:"95px",objectFit:"contain"}}/><h3>Girls</h3></div></div><div className="children-grid">
+              {[...children].sort((a,b) => (a.gender === "boy" ? 0 : a.gender === "girl" ? 1 : 2) - (b.gender === "boy" ? 0 : b.gender === "girl" ? 1 : 2)).map(child => {
                 const childHistory = getStarHistory(child.id);
                 return (
                   <div className="child-card" key={child.id}>
@@ -1316,7 +1316,7 @@ function updateCheckIn(
           <section className="card">
             <h2>Ã°Å¸â€™– Children's Daily Check-in</h2>
 
-            {children.map(child => {
+            {[...children].sort((a,b) => (a.gender === "boy" ? 0 : a.gender === "girl" ? 1 : 2) - (b.gender === "boy" ? 0 : b.gender === "girl" ? 1 : 2)).map(child => {
               const answer = checkIns.find(
                 item => item.childId === child.id && item.date === today
               );
