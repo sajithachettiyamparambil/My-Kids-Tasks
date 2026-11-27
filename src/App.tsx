@@ -1138,10 +1138,10 @@ function updateCheckIn(
         <div className="task-info task-info-compact">
           <h3>{task.title}</h3>
           <p>
-       {formatTime(task.start)} â€“ {formatTime(task.end)} Â· {duration} min          </p>
+       {formatTime(task.start)} – {formatTime(task.end)} · {duration} min          </p>
 
           {approved && (
-            <span className="task-status">Approved âœ“</span>
+            <span className="task-status">Approved ✓</span>
           )}
 
           {done && !approved && (
@@ -1163,7 +1163,7 @@ function updateCheckIn(
           onClick={() => markDone(task, selectedChild)}
           aria-label="Mark task as done"
         >
-          {done ? 'âœ“' : 'Ã¢ËœÂ'}
+          {done ? '✓' : '☐'}
         </button>
       </div>
     );
@@ -1314,7 +1314,7 @@ function updateCheckIn(
             }}>+ Add Child</button>
           </section>
           <section className="card">
-            <h2>Ã°Å¸â€™â€“ Children's Daily Check-in</h2>
+            <h2>Ã°Å¸â€™– Children's Daily Check-in</h2>
 
             {children.map(child => {
               const answer = checkIns.find(
@@ -1456,7 +1456,7 @@ function updateCheckIn(
                   <h3>{task.title}</h3>
                   <p>{task.child === -1 ? 'All children' :
                     children.find(child => child.id === task.child)?.name || 'Unnamed child'}
-                    {' Â· '}{formatTime(task.start)}â€“{formatTime(task.end)} Â· {task.stars} {'\u2B50'}</p>
+                    {' · '}{formatTime(task.start)}–{formatTime(task.end)} · {task.stars} {'\u2B50'}</p>
                   {task.repeatType !== 'none' && (
   <span className="task-status">
     {task.repeatType === 'daily' ? 'Every day' :
@@ -1484,7 +1484,7 @@ function updateCheckIn(
 )}
 {child.name.trim() || 'Add name'}:</span>
                       {isApproved(task, child.id)
-                        ? <span className="task-status">Approved âœ“</span>
+                        ? <span className="task-status">Approved ✓</span>
                         : isDone(task, child.id)
                           ? <button onClick={() => approveTask(task, child.id)}>Approve {'\u2B50'}</button>
                           : <span>Not completed</span>}
