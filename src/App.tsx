@@ -1,4 +1,4 @@
-
+﻿
 import { useEffect, useState, type FormEvent } from 'react';
 import './App.css';
 
@@ -10,12 +10,14 @@ type Child = {
 type Task = {
   id: number;
   title: string;
+ 
   child: number;
   start: string;
   end: string;
   stars: number;
   doneBy: number[];
   approvedBy: number[];
+  missedBy: number[];
 repeatType: 'none' | 'daily' | 'weekly' |'days' | 'monthly';
 repeatDays: number[];
 repeatWeekday: number;
@@ -107,6 +109,7 @@ function loadTasks(): Task[] {
       stars: Number(item.stars ?? 1) || 1,
       doneBy,
       approvedBy: Array.isArray(item.approvedBy) ? item.approvedBy.map(Number) : [],
+      missedBy: Array.isArray(item.missedBy) ? item.missedBy.map(Number) : [],
       repeatType: item.repeatType ?? (item.repeatDaily ? 'days' : 'none'),
       repeatDays: Array.isArray(item.repeatDays)
         ? item.repeatDays.map(Number)
@@ -314,6 +317,13 @@ const [checkIns, setCheckIns] = useState<DailyCheckIn[]>(
   localStorage.setItem('kids-winner-history', JSON.stringify(winnerHistory));
 }, [winnerHistory]);
  const [view, setView] = useState<'kids' | 'parent'>('kids');
+const [parentPasswordHash, setParentPasswordHash] = useState<string>(() => readStorage('kids-parent-password-hash', ''));
+const [parentPasswordInput, setParentPasswordInput] = useState('');
+const [parentPasswordConfirm, setParentPasswordConfirm] = useState('');
+const [parentPasswordError, setParentPasswordError] = useState('');
+const [showParentLogin, setShowParentLogin] = useState(false);
+const [parentUnlocked, setParentUnlocked] = useState(false);
+
   const [theme, setTheme] = useState<
     'dream' | 'bunny' | 'sky' | 'jungle' | 'classic' | 'starry' |
     'midnight' | 'ocean' | 'forest'
@@ -339,7 +349,95 @@ const [repeatDays, setRepeatDays] = useState<number[]>([]);
  const [clock, setClock] = useState(() => getClock());
  const [, setCurrentTime] = useState(() => new Date());  const [today, setToday] = useState(() => dateKey());
 const [lastWinnerCheck, setLastWinnerCheck] = useState('');
-  function getClock() {
+ 
+function bytesToHex(bytes: Uint8Array): string {
+  return Array.from(bytes)
+    .map(value => value.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+async function derivePasswordHash(password: string, salt: Uint8Array): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(password),
+    'PBKDF2',
+    false,
+    ['deriveBits']
+  );
+
+  const result = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt: new Uint8Array(salt).slice().buffer, iterations: 120000, hash: 'SHA-256' },
+    key,
+    256
+  );
+
+  return bytesToHex(new Uint8Array(result));
+}
+
+async function createParentPasswordRecord(password: string): Promise<string> {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const hash = await derivePasswordHash(password, salt);
+  return `pbkdf2-sha256$120000$${bytesToHex(salt)}$${hash}`;
+}
+
+async function verifyParentPassword(password: string, record: string): Promise<boolean> {
+  try {
+    const parts = record.split('$');
+    if (parts.length !== 4 || parts[0] !== 'pbkdf2-sha256') return false;
+
+    const saltHex = parts[2];
+    const expectedHash = parts[3];
+    const salt = new Uint8Array(
+      saltHex.match(/.{2}/g)?.map(value => parseInt(value, 16)) ?? []
+    );
+
+    if (salt.length !== 16) return false;
+
+    const actualHash = await derivePasswordHash(password, salt);
+    return actualHash === expectedHash;
+  } catch {
+    return false;
+  }
+}
+async function saveParentPassword() {
+  if (parentPasswordInput.length < 6) {
+    setParentPasswordError('Password must be at least 6 characters.');
+    return;
+  }
+
+  if (parentPasswordInput !== parentPasswordConfirm) {
+    setParentPasswordError('Passwords do not match.');
+    return;
+  }
+
+  const record = await createParentPasswordRecord(parentPasswordInput);
+  localStorage.setItem('kids-parent-password-hash', record);
+  setParentPasswordHash(record);
+  setParentPasswordInput('');
+  setParentPasswordConfirm('');
+  setParentPasswordError('');
+  setParentUnlocked(true);
+  setShowParentLogin(false);
+}
+
+async function unlockParentSection() {
+  const valid = await verifyParentPassword(
+    parentPasswordInput,
+    parentPasswordHash
+  );
+
+  if (!valid) {
+    setParentPasswordError('Incorrect password. Please try again.');
+    return;
+  }
+
+  setParentPasswordInput('');
+  setParentPasswordError('');
+  setParentUnlocked(true);
+  setShowParentLogin(false);
+}
+
+ function getClock() {
     const now = new Date();
     return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
   }
@@ -426,6 +524,107 @@ useEffect(() => {
 useEffect(() => {
   localStorage.setItem('kids-daily-checkins', JSON.stringify(checkIns));
 }, [checkIns]);
+// kids-deadline-enforcement-start
+useEffect(() => {
+  const now = new Date();
+  const startKey = 'kids-deadline-enforcement-start-date';
+  const enforcementStartDate = localStorage.getItem(startKey) ?? today;
+  if (!localStorage.getItem(startKey)) localStorage.setItem(startKey, today);
+
+  const overdue: {
+    taskId: number;
+    taskDate: string;
+    childId: number;
+    stars: number;
+    deadline: Date;
+  }[] = [];
+
+  tasks.forEach(task => {
+    if (task.taskDate < enforcementStartDate) return;
+    const deadline = new Date(`${task.taskDate}T${task.end}:00`);
+    if (Number.isNaN(deadline.getTime()) || now.getTime() < deadline.getTime()) return;
+
+    children.forEach(child => {
+      if (task.child !== -1 && task.child !== child.id) return;
+      if ((task.doneBy ?? []).includes(child.id)) return;
+      if ((task.missedBy ?? []).includes(child.id)) return;
+
+      overdue.push({
+        taskId: task.id,
+        taskDate: task.taskDate,
+        childId: child.id,
+        stars: Math.max(0, task.stars),
+        deadline,
+      });
+    });
+  });
+
+  if (overdue.length === 0) return;
+
+  const recordedIds = new Set(starHistory.map(record => record.id));
+
+  setTasks(old => old.map(task => {
+    const missedChildren = overdue
+      .filter(event =>
+        event.taskId === task.id &&
+        event.taskDate === task.taskDate
+      )
+      .map(event => event.childId);
+
+    if (missedChildren.length === 0) return task;
+
+    return {
+      ...task,
+      missedBy: [...new Set([...(task.missedBy ?? []), ...missedChildren])],
+    };
+  }));
+
+  const freshPenalties = overdue.filter(event =>
+    !recordedIds.has(`missed-${event.taskId}-${event.taskDate}-${event.childId}`)
+  );
+
+  if (freshPenalties.length === 0) return;
+
+  const remaining = new Map<number, number>();
+  children.forEach(child => {
+    remaining.set(child.id, Math.max(0, stars[child.id] ?? 0));
+  });
+
+  const penaltyRecords: StarRecord[] = freshPenalties.map(event => {
+    const available = remaining.get(event.childId) ?? 0;
+    const deduction = Math.min(available, event.stars);
+    remaining.set(event.childId, available - deduction);
+
+    return {
+      id: `missed-${event.taskId}-${event.taskDate}-${event.childId}`,
+      childId: event.childId,
+      stars: -deduction,
+      date: event.deadline.toISOString(),
+    };
+  });
+
+  const totalDeductions = new Map<number, number>();
+  penaltyRecords.forEach(record => {
+    totalDeductions.set(
+      record.childId,
+      (totalDeductions.get(record.childId) ?? 0) - record.stars
+    );
+  });
+
+  setStars(old => {
+    const updated = [...old];
+    totalDeductions.forEach((amount, childId) => {
+      updated[childId] = Math.max(0, (updated[childId] ?? 0) - amount);
+    });
+    return updated;
+  });
+
+  setStarHistory(old => {
+    const existingIds = new Set(old.map(record => record.id));
+    const additions = penaltyRecords.filter(record => !existingIds.has(record.id));
+    return additions.length > 0 ? [...old, ...additions] : old;
+  });
+}, [tasks, children, stars, starHistory, clock, today]);
  useEffect(() => {
   const currentDate = new Date();
   const currentDay = currentDate.getDay();
@@ -453,6 +652,7 @@ useEffect(() => {
       taskDate: today,
       doneBy: [],
       approvedBy: [],
+      missedBy: [],
     };
   }));
 }, [today]);
@@ -507,6 +707,7 @@ useEffect(() => {
   ));
 }
   function approveTask(task: Task, childId: number) {
+    if (!parentUnlocked || view !== 'parent') return;
     if (!isDone(task, childId) || isApproved(task, childId)) return;
 
     const record: StarRecord = {
@@ -624,6 +825,7 @@ useEffect(() => {
       stars: taskStars,
       doneBy: [],
       approvedBy: [],
+      missedBy: [],
       repeatType,
       repeatDays,
       repeatWeekday: currentDate.getDay(),
@@ -839,8 +1041,7 @@ function updateCheckIn(
           <p>Little tasks, big achievements!</p>
         </div>
         <div className="view-switch">
-          <button className={view === 'kids' ? 'active' : ''} onClick={() => setView('kids')}>Kids</button>
-          <button className={view === 'parent' ? 'active' : ''} onClick={() => setView('parent')}>Parent</button>
+      <button className={view === 'kids' ? 'active' : ''} onClick={() => { setView('kids'); setParentUnlocked(false); setShowParentLogin(false); }}>Kids</button>    <button className={view === 'parent' ? 'active' : ''} onClick={() => { setView('parent'); setShowParentLogin(true); }}>Parent</button>
         </div>
       </header>
 
@@ -1041,7 +1242,64 @@ function updateCheckIn(
       )}
 
 
-      {view === 'parent' && (
+      {view === 'parent' && showParentLogin && !parentUnlocked && (
+  <main className="main-content">
+    <section className="card">
+      <h2>🔐 Parent Access</h2>
+      <p>
+        {parentPasswordHash
+          ? 'Enter your parent password to continue.'
+          : 'Create a password to protect your parent section.'}
+      </p>
+
+      <form onSubmit={event => {
+        event.preventDefault();
+        if (parentPasswordHash) {
+          void unlockParentSection();
+        } else {
+          void saveParentPassword();
+        }
+      }}>
+        <label>
+          {parentPasswordHash ? 'Parent Password' : 'Create Password'}
+          <input
+            type="password"
+            value={parentPasswordInput}
+            onChange={event => setParentPasswordInput(event.target.value)}
+            minLength={6}
+            autoComplete="current-password"
+            required
+          />
+        </label>
+
+        {!parentPasswordHash && (
+          <label>
+            Confirm Password
+            <input
+              type="password"
+              value={parentPasswordConfirm}
+              onChange={event => setParentPasswordConfirm(event.target.value)}
+              minLength={6}
+              autoComplete="new-password"
+              required
+            />
+          </label>
+        )}
+
+        {parentPasswordError && (
+          <p role="alert">{parentPasswordError}</p>
+        )}
+
+        <button type="submit">
+          {parentPasswordHash ? 'Unlock Parent Section' : 'Create Parent Password'}
+        </button>
+      </form>
+    </section>
+  </main>
+)}
+
+{view === 'parent' && parentUnlocked && (
+
         <main className="main-content">
                <section className="card theme-settings">
             <h2>🎨 Choose App Theme</h2>
