@@ -975,7 +975,7 @@ function updateCheckIn(
           ))}
       </div>
 
-      <h2>â­ {currentWinners.stars} Stars! â­</h2>
+      <h2>{'\u2B50'} {currentWinners.stars} Stars! {'\u2B50'}</h2>
       <p>You are amazing! Keep shining!</p>
 
       <button onClick={() => setShowWinnerCelebration(false)}>
@@ -1013,24 +1013,24 @@ function updateCheckIn(
             </div>
             <div>
               <h2>Hello, {children.find(child => child.id === selectedChild)?.name.trim() || 'Little Star'}! {'\u{1F44B}'}</h2>
-              <p>You have {stars[selectedChild] ?? 0} â­ stars</p>
+              <p>You have {stars[selectedChild] ?? 0} {'\u2B50'} stars</p>
             </div>
           </section>
 
           <section className="card">
-            <h2>â­ My Star History</h2>
+            <h2>{'\u2B50'} My Star History</h2>
             <div className="children-grid star-history-grid">
               <div className="child-card star-history-card">
                 <h3>Today</h3>
-                <p>{history.daily} â­</p>
+                <p>{history.daily} {'\u2B50'}</p>
               </div>
               <div className="child-card star-history-card">
                 <h3>This Week</h3>
-                <p>{history.weekly} â­</p>
+                <p>{history.weekly} {'\u2B50'}</p>
               </div>
               <div className="child-card star-history-card">
                 <h3>This Month</h3>
-                <p>{history.monthly} â­</p>
+                <p>{history.monthly} {'\u2B50'}</p>
               </div>
             </div>
           </section>
@@ -1048,7 +1048,7 @@ function updateCheckIn(
             .filter(Boolean)
             .join(' & ')}
         </p>
-        <p>{winner.stars} â­ Stars</p>
+        <p>{winner.stars} {'\u2B50'} Stars</p>
         <small>{winner.startDate} - {winner.endDate}</small>
       </div>
     ))}
@@ -1176,7 +1176,7 @@ function updateCheckIn(
               <div className="task-card" key={reward.id}>
                 <div className="task-info">
                   <h3>{reward.title}</h3>
-                  <p>{reward.cost} â­</p>
+                  <p>{reward.cost} {'\u2B50'}</p>
                 </div>
                 <button disabled={stars[selectedChild] < reward.cost}
                   onClick={() => redeemReward(reward)}>Redeem</button>
@@ -1289,10 +1289,10 @@ function updateCheckIn(
   />
 </div>
                     <label>Child profile<select value={child.gender ?? ""} onChange={event => setChildren(old => old.map(item => item.id === child.id ? { ...item, gender: event.target.value === "" ? undefined : event.target.value as "girl" | "boy" } : item))}><option value="">Choose</option><option value="girl">Girl</option><option value="boy">Boy</option></select></label>
-                    <p>{stars[child.id]} â­ stars</p>
-                    <p>Today: {childHistory.daily} â­</p>
-                    <p>This week: {childHistory.weekly} â­</p>
-                    <p>This month: {childHistory.monthly} â­</p>
+                    <p>{stars[child.id]} {'\u2B50'} stars</p>
+                    <p>Today: {childHistory.daily} {'\u2B50'}</p>
+                    <p>This week: {childHistory.weekly} {'\u2B50'}</p>
+                    <p>This month: {childHistory.monthly} {'\u2B50'}</p>
                     <label className="photo-upload">Choose photo
                       <input type="file" accept="image/*"
                         onChange={event => uploadPhoto(child.id, event.target.files?.[0])} />
@@ -1456,7 +1456,7 @@ function updateCheckIn(
                   <h3>{task.title}</h3>
                   <p>{task.child === -1 ? 'All children' :
                     children.find(child => child.id === task.child)?.name || 'Unnamed child'}
-                    {' Â· '}{formatTime(task.start)}â€“{formatTime(task.end)} Â· {task.stars} â­</p>
+                    {' Â· '}{formatTime(task.start)}â€“{formatTime(task.end)} Â· {task.stars} {'\u2B50'}</p>
                   {task.repeatType !== 'none' && (
   <span className="task-status">
     {task.repeatType === 'daily' ? 'Every day' :
@@ -1486,7 +1486,7 @@ function updateCheckIn(
                       {isApproved(task, child.id)
                         ? <span className="task-status">Approved âœ“</span>
                         : isDone(task, child.id)
-                          ? <button onClick={() => approveTask(task, child.id)}>Approve â­</button>
+                          ? <button onClick={() => approveTask(task, child.id)}>Approve {'\u2B50'}</button>
                           : <span>Not completed</span>}
                     </div>
                   ))}
@@ -1534,7 +1534,7 @@ function updateCheckIn(
       <div className="task-card" key={reward.id}>
         <div className="task-info">
           <h3>{reward.title}</h3>
-          <p>{reward.cost} â­</p>
+          <p>{reward.cost} {'\u2B50'}</p>
         </div>
 
         <button type="button" onClick={() => startEditingReward(reward)}>
