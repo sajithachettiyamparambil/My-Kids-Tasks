@@ -1517,7 +1517,7 @@ function updateCheckIn(
                   <h3>{task.title}</h3>
                   <p>{task.child === -1 ? 'All children' :
                     children.find(child => child.id === task.child)?.name || 'Unnamed child'}
-                    {' · '}{task.start}–{task.end} · {task.stars} ⭐</p>
+                    {' · '}{formatTime(task.start)}–{formatTime(task.end)} · {task.stars} ⭐</p>
                   {task.repeatType !== 'none' && (
   <span className="task-status">
     {task.repeatType === 'daily' ? 'Every day' :
