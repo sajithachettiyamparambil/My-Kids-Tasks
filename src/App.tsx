@@ -528,9 +528,6 @@ useEffect(() => {
 // kids-deadline-enforcement-start
 useEffect(() => {
   const now = new Date();
-  const startKey = 'kids-deadline-enforcement-start-date';
-  const enforcementStartDate = localStorage.getItem(startKey) ?? today;
-  if (!localStorage.getItem(startKey)) localStorage.setItem(startKey, today);
 
   const overdue: {
     taskId: number;
@@ -541,7 +538,7 @@ useEffect(() => {
   }[] = [];
 
   tasks.forEach(task => {
-    if (task.taskDate < enforcementStartDate) return;
+    if (task.taskDate !== today) return;
     const deadline = new Date(`${task.taskDate}T${task.end}:00`);
     if (Number.isNaN(deadline.getTime()) || now.getTime() < deadline.getTime()) return;
 
@@ -631,8 +628,10 @@ useEffect(() => {
   const currentDay = currentDate.getDay();
   const currentDayOfMonth = currentDate.getDate();
 
-  setTasks(old => old.map(task => {
-    if (task.taskDate === today) return task;
+  setTasks(old => old.flatMap(task => {
+    if (task.taskDate >= today) return [task];
+
+    if (task.repeatType === 'none') return [];
 
     let shouldRepeat = false;
 
@@ -646,15 +645,15 @@ useEffect(() => {
       shouldRepeat = Number(task.taskDate.slice(-2)) === currentDayOfMonth;
     }
 
-    if (!shouldRepeat) return task;
+    if (!shouldRepeat) return [task];
 
-    return {
+    return [{
       ...task,
       taskDate: today,
       doneBy: [],
       approvedBy: [],
       missedBy: [],
-    };
+    }];
   }));
 }, [today]);
   function isAssigned(task: Task, childId: number) {
