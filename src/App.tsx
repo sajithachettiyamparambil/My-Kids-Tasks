@@ -7,6 +7,7 @@ type Child = {
   id: number;
   name: string;
   photo?: string;
+  gender?: 'girl' | 'boy';
 };
 type Task = {
   id: number;
@@ -146,145 +147,98 @@ function playTickSound() {
   } catch {
     // Browser may block sound.
   }
-} function getTimeParts(value: string) {
-  const [hour, minute] = value.split(':');
-  const h = Number(hour);
-
-  return {
-    hour: String(h % 12 || 12),
-    minute,
-    period: h >= 12 ? 'PM' : 'AM'
-  };
-}
-function formatTime(value: string) {
+} function formatTime(value: string) {
   const [hour, minute] = value.split(':').map(Number);
   const period = hour >= 12 ? 'PM' : 'AM';
-  return `${hour % 12 || 12}:${String(minute).padStart(2, '0')} ${period}`;
-}
-function make24HourTime(hour: string, minute: string, period: string) {
-  let h = Number(hour) % 12;
-  if (period === 'PM') h += 12;
-
-  return `${String(h).padStart(2, '0')}:${minute}`;
+  const displayHour = hour % 12 || 12;
+  return displayHour + ':' + String(minute).padStart(2, '0') + ' ' + period;
 }
 
-function addOneHour(value: string) {
-  const [hour, minute] = value.split(':').map(Number);
-  const total = (hour * 60 + minute + 60) % 1440;
-
-  return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
-}
-function TimePicker({ label, value, onChange, disabled = false }: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  disabled?: boolean;
-}) {
-  const parts = getTimeParts(value);
+function TimePicker({ label, value, onChange, disabled = false }: { label: string; value: string; onChange: (value: string) => void; disabled?: boolean; }) {
+  const [initialHour, initialMinute] = value.split(':').map(Number);
+  const [selectedHour, setSelectedHour] = useState(initialHour % 12 || 12);
+  const [selectedMinute, setSelectedMinute] = useState(initialMinute || 0);
+  const [period, setPeriod] = useState(initialHour >= 12 ? 'PM' : 'AM');
   const [stage, setStage] = useState<'hour' | 'minute'>('hour');
 
-  const numbers = stage === 'hour'
-    ? Array.from({ length: 12 }, (_, i) => i === 0 ? 12 : i)
-    : Array.from({ length: 12 }, (_, i) => i * 5);
-
-  function chooseNumber(number: number) {
-    if (stage === 'hour') {
-      onChange(make24HourTime(String(number), parts.minute, parts.period));
-      setStage('minute');
-    } else {
-      onChange(make24HourTime(parts.hour, String(number).padStart(2, '0'), parts.period));
-    }
+  function saveTime(hour: number, minute: number, ampm: string) {
+    const hour24 = ampm === 'PM' ? (hour % 12) + 12 : hour % 12;
+    onChange(String(hour24).padStart(2, '0') + ':' + String(minute).padStart(2, '0'));
   }
 
   function adjustMinute(amount: number) {
-    const minute = (Number(parts.minute) + amount + 60) % 60;
-    onChange(make24HourTime(parts.hour, String(minute).padStart(2, '0'), parts.period));
+    const next = (selectedMinute + amount + 60) % 60;
+    setSelectedMinute(next);
+    saveTime(selectedHour, next, period);
   }
 
   return (
     <div className="clock-picker-label">
       <label>{label}</label>
-
       <div className="clock-display">
-        <button type="button" disabled={disabled} onClick={() => setStage('hour')}>
-          {parts.hour}
-        </button>
-        :
-        <button type="button" disabled={disabled} onClick={() => setStage('minute')}>
-          {parts.minute}
-        </button>
-        <button
-          type="button"
-          className="clock-period"
-          disabled={disabled}
-          onClick={() => onChange(make24HourTime(
-            parts.hour,
-            parts.minute,
-            parts.period === 'AM' ? 'PM' : 'AM'
-          ))}
-        >
-          {parts.period}
-        </button>
+        <button type="button" disabled={disabled} className={stage === 'hour' ? 'clock-selected' : ''} onClick={() => setStage('hour')}>{selectedHour}</button>
+        <button type="button" disabled={disabled} className={stage === 'minute' ? 'clock-selected' : ''} onClick={() => setStage('minute')}>{String(selectedMinute).padStart(2, '0')}</button>
+        <button type="button" disabled={disabled} className="clock-period" onClick={() => {
+          const next = period === 'AM' ? 'PM' : 'AM';
+          setPeriod(next);
+          saveTime(selectedHour, selectedMinute, next);
+        }}>{period}</button>
       </div>
-
-      {disabled ? (
-        <p className="clock-instruction">Fixed one-hour duration</p>
-      ) : (
+      {stage === 'hour' ? (
         <>
-          <p className="clock-instruction">
-            Select {stage === 'hour' ? 'hour' : 'minutes'}
-          </p>
-
-          {stage === 'hour' ? (
-            <div className="clock-face">
-              {numbers.map(number => {
-                const angle = (number / 12) * Math.PI * 2;
-                const left = 50 + Math.sin(angle) * 40;
-                const top = 50 - Math.cos(angle) * 40;
-                const selected = Number(parts.hour) === number;
-
-                return (
-                  <button
-                    type="button"
-                    key={number}
-                    className={`clock-number ${selected ? 'selected' : ''}`}
-                    style={{ left: `${left}%`, top: `${top}%` }}
-                    onClick={() => chooseNumber(number)}
-                  >
-                    {number}
-                  </button>
-                );
-              })}
-              <div className="clock-center" />
-            </div>
-          ) : (
-            <div className="minute-picker">
-              <div className="minute-options">
-                {numbers.map(number => (
-                  <button
-                    type="button"
-                    key={number}
-                    className={Number(parts.minute) === number ? 'selected' : ''}
-                    onClick={() => chooseNumber(number)}
-                  >
-                    {String(number).padStart(2, '0')}
-                  </button>
-                ))}
-              </div>
-
-              <div className="minute-adjust">
-                <button type="button" onClick={() => adjustMinute(-1)}>−1</button>
-                <span>Exact minute</span>
-                <button type="button" onClick={() => adjustMinute(1)}>+1</button>
-              </div>
-            </div>
-          )}
+          <p className="clock-instruction">Select hour</p>
+          <div className="clock-face compact-hour-clock">
+            {Array.from({ length: 12 }, (_, index) => index + 1).map(hour => {
+              const angle = hour * Math.PI / 6;
+              return (
+                <button type="button" key={hour} disabled={disabled}
+                  className={'clock-number' + (selectedHour === hour ? ' active' : '')}
+                  style={{ left: (50 + 39 * Math.sin(angle)) + '%', top: (50 - 39 * Math.cos(angle)) + '%' }}
+                  onClick={() => {
+                    setSelectedHour(hour);
+                    saveTime(hour, selectedMinute, period);
+                    setStage('minute');
+                  }}>{hour}</button>
+              );
+            })}
+            <div className="clock-center" />
+          </div>
         </>
+      ) : (
+        <div className="minute-picker">
+          <p className="clock-instruction">Select minutes</p>
+          <div className="minute-clock-face">
+            {Array.from({ length: 12 }, (_, index) => {
+              const minute = index * 5;
+              const angle = index * Math.PI / 6;
+              return (
+                <button
+                  type="button"
+                  key={minute}
+                  disabled={disabled}
+                  className={'minute-clock-number major' + (selectedMinute === minute ? ' active' : '')}
+                  style={{ left: (50 + 39 * Math.sin(angle)) + '%', top: (50 - 39 * Math.cos(angle)) + '%' }}
+                  onClick={() => {
+                    setSelectedMinute(minute);
+                    saveTime(selectedHour, minute, period);
+                    setStage('hour');
+                  }}
+                >{index === 0 ? '12' : index}</button>
+              );
+            })}
+            <div className="clock-center" />
+          </div>          <div className="minute-adjust">
+            <button type="button" disabled={disabled} onClick={() => adjustMinute(-1)}>−1</button>
+            <span>Exact minute: {String(selectedMinute).padStart(2, '0')}</span>
+            <button type="button" disabled={disabled} onClick={() => adjustMinute(1)}>+1</button>
+          </div>
+          <button type="button" disabled={disabled} onClick={() => setStage('hour')}>Done</button>
+        </div>
       )}
     </div>
   );
 }
- function App() {
+function App() {
   const [children, setChildren] = useState<Child[]>(loadChildren);
   const [photos, setPhotos] = useState<Record<number, string>>(
     () => readStorage('kids-photos', {})
@@ -324,6 +278,7 @@ const [parentPasswordConfirm, setParentPasswordConfirm] = useState('');
 const [parentPasswordError, setParentPasswordError] = useState('');
 const [showParentLogin, setShowParentLogin] = useState(false);
 const [parentUnlocked, setParentUnlocked] = useState(false);
+const [showSettings, setShowSettings] = useState(false);
 
   const [theme, setTheme] = useState<
     'dream' | 'bunny' | 'sky' | 'jungle' | 'classic' | 'starry' |
@@ -849,12 +804,6 @@ function startEditingTask(task: Task) {
 }
   function setTaskType(type: string) {
     setTaskTitle(type);
-    if (type === 'Prayer' || type === 'Homework') {
-      const [hours, minutes] = taskStart.split(':').map(Number);
-      const end = new Date();
-      end.setHours(hours, minutes + 60, 0, 0);
-      setTaskEnd(`${String(end.getHours()).padStart(2, '0')}:${String(end.getMinutes()).padStart(2, '0')}`);
-    }
   }
 
   function addReward(event: FormEvent<HTMLFormElement>) {
@@ -999,7 +948,7 @@ function updateCheckIn(
   />
 ))}
   <div className="winner-card">
-      <div className="winner-trophy">🏆</div>
+      <div className="winner-trophy">{'\u{1F3C6}'}</div>
       <h1>CONGRATULATIONS!</h1>
       <h2>
         {currentWinners.period === 'weekly'
@@ -1019,7 +968,7 @@ function updateCheckIn(
                   className="winner-photo"
                 />
               ) : (
-                <div className="winner-photo winner-no-photo">🌟</div>
+                <div className="winner-photo winner-no-photo">{'\u{1F31F}'}</div>
               )}
               <h2>{child.name.trim() || 'Add name'}</h2>
             </div>
@@ -1030,18 +979,18 @@ function updateCheckIn(
       <p>You are amazing! Keep shining!</p>
 
       <button onClick={() => setShowWinnerCelebration(false)}>
-        Celebrate! 🎉
+        Celebrate! {'\u{1F389}'}
       </button>
     </div>
   </div>
 )}
  <header className="app-header">
         <div>
-          <h1>⭐ Star Rewards</h1>
+          <h1>{'\u{2B50}'} Star Rewards</h1>
           <p>Little tasks, big achievements!</p>
         </div>
         <div className="view-switch">
-      <button className={view === 'kids' ? 'active' : ''} onClick={() => { setView('kids'); setParentUnlocked(false); setShowParentLogin(false); }}>Kids</button>    <button className={view === 'parent' ? 'active' : ''} onClick={() => { setView('parent'); setShowParentLogin(true); }}>Parent</button>
+      <button className={view === 'kids' ? 'active' : ''} onClick={() => { setView('kids'); setParentUnlocked(false); setShowParentLogin(false); }}>Kids</button>    <button className={view === 'parent' ? 'active' : ''} onClick={() => { setView('parent'); setShowParentLogin(true); }}>Parent</button> {parentUnlocked && <button type="button" className="settings-icon-button" title="Settings" aria-label="Settings" onClick={() => setShowSettings(!showSettings)}>⚙</button>}
         </div>
       </header>
 
@@ -1063,7 +1012,7 @@ function updateCheckIn(
                 : <span>🌟</span>}
             </div>
             <div>
-              <h2>Hello, {children.find(child => child.id === selectedChild)?.name.trim() || 'Little Star'}! 👋</h2>
+              <h2>Hello, {children.find(child => child.id === selectedChild)?.name.trim() || 'Little Star'}! {'\u{1F44B}'}</h2>
               <p>You have {stars[selectedChild] ?? 0} ⭐ stars</p>
             </div>
           </section>
@@ -1087,11 +1036,11 @@ function updateCheckIn(
           </section>
 {winnerHistory.length > 0 && (
   <section className="card">
-    <h2>🏆 Winner History</h2>
+    <h2>{'\u{1F3C6}'} Winner History</h2>
     {winnerHistory.slice().reverse().map(winner => (
       <div className="child-card" key={winner.id}>
         <h3>
-          {winner.period === 'weekly' ? '⭐ Weekly Winner' : '🌟 Monthly Winner'}
+        {winner.period === 'weekly' ? '\u{2B50} Weekly Winner' : '\u{1F31F} Monthly Winner'}
         </h3>
         <p>
           {winner.winners
@@ -1100,13 +1049,13 @@ function updateCheckIn(
             .join(' & ')}
         </p>
         <p>{winner.stars} ⭐ Stars</p>
-        <small>{winner.startDate} – {winner.endDate}</small>
+        <small>{winner.startDate} - {winner.endDate}</small>
       </div>
     ))}
   </section>
 )}
  <section className="card daily-checkin">
-  <h2>💖 How Was My Day?</h2>
+  <h2>{'\u{1F496}'} How Was My Day?</h2>
   <p>Answer honestly. Your feelings matter!</p>
 
   <label>1. Did you shout at your sibling?</label>
@@ -1159,11 +1108,7 @@ function updateCheckIn(
   <p>💗 Thank you for sharing your feelings!</p>
 </section>   
 <section className="encouragement-card">
-  <div className="encouragement-characters">
-    <span>🦄</span>
-    <span>🐰</span>
-    <span>⭐</span>
-  </div>
+  <div className="activity-pictures">{["cycling","swimming","sleeping","jumping"].map(activity => <img key={activity} src={"/" + activity + "-" + (children.find(child => child.id === selectedChild)?.gender === "boy" ? "boy" : "girl") + ".jpg"} alt="" />)}</div>
   <h2>You Can Do It! 💜</h2>
   <p>Every little task makes you a superstar!</p>
   <p>Keep trying, keep smiling and keep shining! 🌈</p>
@@ -1237,7 +1182,7 @@ function updateCheckIn(
                   onClick={() => redeemReward(reward)}>Redeem</button>
               </div>
             ))}
-          </section>
+          </section> 
         </main>
       )}
 
@@ -1245,7 +1190,7 @@ function updateCheckIn(
       {view === 'parent' && showParentLogin && !parentUnlocked && (
   <main className="main-content">
     <section className="card">
-      <h2>🔐 Parent Access</h2>
+      <h2>{'\u{1F512}'} Parent Access</h2>
       <p>
         {parentPasswordHash
           ? 'Enter your parent password to continue.'
@@ -1302,7 +1247,7 @@ function updateCheckIn(
 {view === 'parent' && parentUnlocked && (
 
         <main className="main-content">
-          <ParentPasskeyPanel mode="setup" />
+          {showSettings && (<><ParentPasskeyPanel mode="setup" />
                <section className="card theme-settings">
             <h2>🎨 Choose App Theme</h2>
             <p>Pick your favourite look!</p>
@@ -1318,7 +1263,7 @@ function updateCheckIn(
   <button onClick={() => setTheme('forest')}>🌲 Dark Forest</button>
 </div>
           </section>
-          <section className="card">
+          </>)}{!showSettings && (<><section className="card">
             <h2>👨‍👩‍👧‍👦 Children</h2>
             <div className="children-grid">
               {children.map(child => {
@@ -1343,6 +1288,8 @@ function updateCheckIn(
     placeholder="Child's name"
   />
 </div>
+                    <label>Child profile<select value={child.gender ?? ""} onChange={event => setChildren(old => old.map(item => item.id === child.id ? { ...item, gender: event.target.value === "" ? undefined : event.target.value as "girl" | "boy" } : item))}><option value="">Choose</option><option value="girl">Girl</option><option value="boy">Boy</option></select></label>
+                    <label>Child profile<select value={child.gender ?? ""} onChange={event => setChildren(old => old.map(item => item.id === child.id ? { ...item, gender: event.target.value === "" ? undefined : event.target.value as "girl" | "boy" } : item))}><option value="">Choose</option><option value="girl">Girl</option><option value="boy">Boy</option></select></label>
                     <p>{stars[child.id]} ⭐ stars</p>
                     <p>Today: {childHistory.daily} ⭐</p>
                     <p>This week: {childHistory.weekly} ⭐</p>
@@ -1404,7 +1351,7 @@ function updateCheckIn(
                   placeholder="Example: Clean your room" required />
               </label>
              <div className="quick-task-buttons">
-  {['Prayer', 'Homework', 'Study', 'Clean room', 'Make bed', 'Brush teeth', 'Organise clothes', 'Help at home', 'Prepare school bag']
+  {['Study', 'Clean room', 'Make bed', 'Brush teeth', 'Organise clothes', 'Help at home', 'Prepare school bag']
     .map(name => (
       <button type="button" key={name} onClick={() => setTaskType(name)}>
         {name}
@@ -1425,12 +1372,7 @@ function updateCheckIn(
   <TimePicker
     label="Start time"
     value={taskStart}
-    onChange={value => {
-      setTaskStart(value);
-      if (taskTitle === 'Prayer' || taskTitle === 'Homework') {
-        setTaskEnd(addOneHour(value));
-      }
-    }}
+    onChange={setTaskStart}
   />
 
   <TimePicker
@@ -1440,8 +1382,6 @@ function updateCheckIn(
     disabled={taskTitle === 'Prayer' || taskTitle === 'Homework'}
   />
 </div>
-              {(taskTitle === 'Prayer' || taskTitle === 'Homework') &&
-                <p className="form-note">This task has a fixed one-hour time period.</p>}
               <label>Stars
                 <input type="number" min="1" max="20" value={taskStars}
                   onChange={event => setTaskStars(Number(event.target.value))} />
@@ -1613,7 +1553,7 @@ function updateCheckIn(
     ))}
   </div>
 )}
-          </section>
+          </section></>)} 
         </main>
       )}
     </div>

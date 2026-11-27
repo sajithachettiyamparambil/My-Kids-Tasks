@@ -1705,3 +1705,110 @@ textarea {
   background-color: var(--theme-bg);
   color: var(--theme-text);
 }
+/* Compact task time inputs */
+.compact-time-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.compact-time-input {
+  width: 145px;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 9px;
+  background: #fff;
+  color: #263238;
+  font-size: 16px;
+}
+
+/* Smaller hour clock */
+.clock-face.compact-hour-clock { width: 160px; height: 160px; }
+@media (max-width: 600px) { .clock-face.compact-hour-clock { width: 160px; height: 160px; } }
+
+/* Circular 60-minute selector */
+.minute-clock-face {
+  width: 250px;
+  height: 250px;
+  max-width: 100%;
+  margin: 12px auto;
+  position: relative;
+  border-radius: 50%;
+  background: #f5eaff;
+  border: 3px solid #a985d0;
+  box-sizing: border-box;
+}
+.minute-clock-number {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 15px;
+  height: 15px;
+  min-width: 15px;
+  min-height: 15px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #68468d;
+  font-size: 7px;
+  line-height: 1;
+  z-index: 1;
+}
+.minute-clock-number.major {
+  width: 21px;
+  height: 21px;
+  min-width: 21px;
+  min-height: 21px;
+  background: white;
+  border: 1px solid #e0cbed;
+  font-size: 9px;
+  font-weight: bold;
+}
+.minute-clock-number.active {
+  background: #9873c8;
+  color: white;
+  font-weight: bold;
+}
+.minute-clock-face { width: 160px; height: 160px; }
+@media (max-width: 600px) { .minute-clock-face { width: 160px; height: 160px; } }
+
+.minute-clock-face { display: block; width: 160px; height: 160px; min-width: 160px; min-height: 160px; position: relative; border-radius: 50%; background: #f5eaff; border: 3px solid #a985d0; box-sizing: border-box; margin: 12px auto; }
+
+.minute-clock-number.major { width: 34px; height: 34px; min-width: 34px; min-height: 34px; font-size: 13px; font-weight: bold; color: #68468d; background: transparent; border: none; }
+.minute-clock-number.major.active { background: #9873c8; color: white; }
+
+.view-switch { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+.settings-icon-button { width: 42px; height: 42px; padding: 0; font-size: 23px; display: inline-flex; align-items: center; justify-content: center; border-radius: 12px; }
+
+/* Compact child details on Parent page */
+.main-content:has(.children-grid) .child-card p { margin: 4px 0; font-size: 13px; line-height: 1.3; }
+.main-content:has(.children-grid) .child-card .child-name-edit input { padding: 7px 9px; font-size: 14px; }
+.main-content:has(.children-grid) .child-card .photo-upload { padding: 7px 9px; margin: 6px 0; gap: 4px; font-size: 12px; border-radius: 10px; }
+.main-content:has(.children-grid) .children-grid { gap: 10px; }
+
+/* Parent child cards: photo left, details right */
+.main-content:has(.children-grid) .child-card { display: grid; grid-template-columns: 65px minmax(0, 1fr); column-gap: 12px; align-items: center; text-align: left; }
+.main-content:has(.children-grid) .child-card > .child-photo { grid-column: 1; grid-row: 1 / span 6; justify-self: center; }
+.main-content:has(.children-grid) .child-card > :not(.child-photo) { grid-column: 2; min-width: 0; width: 100%; }
+.main-content:has(.children-grid) .child-card p { text-align: left; }
+
+/* Improve text contrast in dark themes */
+.app.theme-midnight .encouragement-card h2, .app.theme-ocean .encouragement-card h2, .app.theme-forest .encouragement-card h2 { color: #ffffff !important; }
+.app.theme-midnight .encouragement-card p, .app.theme-ocean .encouragement-card p, .app.theme-forest .encouragement-card p { color: #f4f0ff !important; }
+
+/* Consistent readable text across all dark themes */
+.app.theme-midnight .main-content :is(h1,h2,h3,h4,h5,h6,p,span,label,small,strong,em,b,i,li,a,legend,dt,dd), .app.theme-ocean .main-content :is(h1,h2,h3,h4,h5,h6,p,span,label,small,strong,em,b,i,li,a,legend,dt,dd), .app.theme-forest .main-content :is(h1,h2,h3,h4,h5,h6,p,span,label,small,strong,em,b,i,li,a,legend,dt,dd) { color: var(--theme-text) !important; }
+
+/* Global readable text for dark themes */
+.app.theme-midnight, .app.theme-ocean, .app.theme-forest { color: #f4f7ff !important; }
+.app.theme-midnight :is(h1,h2,h3,h4,h5,h6,p,span,label,small,strong,em,b,i,li,a,legend,dt,dd), .app.theme-ocean :is(h1,h2,h3,h4,h5,h6,p,span,label,small,strong,em,b,i,li,a,legend,dt,dd), .app.theme-forest :is(h1,h2,h3,h4,h5,h6,p,span,label,small,strong,em,b,i,li,a,legend,dt,dd) { color: #f4f7ff !important; }
+
+/* Dark readable text on pale welcome and encouragement cards */
+.app.theme-midnight :is(.child-welcome,.encouragement-card) :is(h1,h2,h3,h4,p,span,label,small,strong), .app.theme-ocean :is(.child-welcome,.encouragement-card) :is(h1,h2,h3,h4,p,span,label,small,strong), .app.theme-forest :is(.child-welcome,.encouragement-card) :is(h1,h2,h3,h4,p,span,label,small,strong) { color: #59436d !important; }
+
+.activity-pictures { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 14px 0; }
+.activity-pictures img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 16px; box-shadow: 0 3px 10px #9875d533; }
+@media (max-width: 600px) { .activity-pictures { gap: 7px; } .activity-pictures img { border-radius: 10px; } }
