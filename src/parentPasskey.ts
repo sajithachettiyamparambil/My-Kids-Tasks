@@ -12,7 +12,7 @@ export const parentPasskey = {
       email,
       options: {
         emailRedirectTo: window.location.origin,
-        shouldCreateUser: true,
+        shouldCreateUser: false,
       },
     });
   },
