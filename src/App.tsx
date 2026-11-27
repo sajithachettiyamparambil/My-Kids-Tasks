@@ -1175,7 +1175,7 @@ function updateCheckIn(
     <p className="empty-message">No tasks added yet. Enjoy your day!</p>
   )}
 
-  {childTasks.map(task => {
+  {[...childTasks].sort((a, b) => a.start.localeCompare(b.start)).map(task => {
     const done = isDone(task, selectedChild);
     const approved = isApproved(task, selectedChild);
     const available = isWithinTime(task);
@@ -1509,7 +1509,7 @@ function updateCheckIn(
             <h2>📋 Task Approvals</h2>
            {tasks.length === 0 &&
   <p className="empty-message">No tasks have been added.</p>}
-           {tasks.map(task => (
+           {[...tasks].sort((a, b) => a.start.localeCompare(b.start)).map(task => (
               <div className="approval-card" key={task.id}>
                 <div className="task-info">
                   <h3>{task.title}</h3>
