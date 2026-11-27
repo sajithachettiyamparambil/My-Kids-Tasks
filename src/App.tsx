@@ -1,6 +1,7 @@
-﻿
+
 import { useEffect, useState, type FormEvent } from 'react';
 import './App.css';
+import ParentPasskeyPanel from './ParentPasskeyPanel';
 
 type Child = {
   id: number;
@@ -1294,6 +1295,7 @@ function updateCheckIn(
           {parentPasswordHash ? 'Unlock Parent Section' : 'Create Parent Password'}
         </button>
       </form>
+      <ParentPasskeyPanel mode="login" onUnlocked={() => { setParentUnlocked(true); setShowParentLogin(false); setParentPasswordError(''); }} />
     </section>
   </main>
 )}
@@ -1301,6 +1303,7 @@ function updateCheckIn(
 {view === 'parent' && parentUnlocked && (
 
         <main className="main-content">
+          <ParentPasskeyPanel mode="setup" />
                <section className="card theme-settings">
             <h2>🎨 Choose App Theme</h2>
             <p>Pick your favourite look!</p>
