@@ -1454,9 +1454,7 @@ function updateCheckIn(
               <div className="approval-card" key={task.id}>
                 <div className="task-info">
                   <h3>{task.title}</h3>
-                  <p>{task.child === -1 ? 'All children' :
-                    children.find(child => child.id === task.child)?.name || 'Unnamed child'}
-                    {' '}{'\u00B7'} {formatTime(task.start)}{'\u2013'}{formatTime(task.end)} {'\u00B7'} {task.stars} {'\u2B50'}</p>
+                  <p>{formatTime(task.start)}{'\u2013'}{formatTime(task.end)} {'\u00B7'} {task.stars} {'\u2B50'}</p>
                   {task.repeatType !== 'none' && (
   <span className="task-status">
     {task.repeatType === 'daily' ? 'Every day' :

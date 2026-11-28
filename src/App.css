@@ -1897,3 +1897,10 @@ textarea {
   flex: 1 1 100px;
   min-width: 0;
 }
+
+/* Parent task approval alignment */
+.approval-card .task-info h3 { white-space: normal; overflow-wrap: break-word; }
+.approval-card .task-info p { white-space: nowrap; overflow-x: auto; }
+.approval-card .approval-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.approval-card .approval-actions .approval-child { flex: 1 1 100%; }
+.approval-card .approval-actions > button { flex: 1 1 100px; }
