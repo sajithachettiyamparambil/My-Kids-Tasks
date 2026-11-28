@@ -990,7 +990,7 @@ function updateCheckIn(
           <p>Little tasks, big achievements!</p>
         </div>
         <div className="view-switch">
-      <button className={view === 'kids' ? 'active' : ''} onClick={() => { setView('kids'); setParentUnlocked(false); setShowParentLogin(false); }}>Kids</button>    <button className={view === 'parent' ? 'active' : ''} onClick={() => { setView('parent'); setShowParentLogin(true); }}>Parent</button> {parentUnlocked && <button type="button" className="settings-icon-button" title="Settings" aria-label="Settings" onClick={() => setShowSettings(!showSettings)}>{'\u2699\uFE0F'}</button>}
+      <button className={view === 'kids' ? 'active' : ''} onClick={() => { setView('kids'); setParentUnlocked(false); setShowParentLogin(false); }}>Kids</button>    <button className={view === 'parent' ? 'active' : ''} onClick={() => { setView('parent'); setParentUnlocked(true); setShowParentLogin(false); setParentPasswordError(''); }}>Parent</button> {parentUnlocked && <button type="button" className="settings-icon-button" title="Settings" aria-label="Settings" onClick={() => setShowSettings(!showSettings)}>{'\u2699\uFE0F'}</button>}
         </div>
       </header>
 
