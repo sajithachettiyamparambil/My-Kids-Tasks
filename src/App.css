@@ -1953,3 +1953,26 @@ textarea {
   word-break: normal !important;
 }
 
+
+/* Force Parent task information to use the full card width */
+.approval-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+.approval-card .task-info {
+  display: block !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+.approval-card .task-info h3 {
+  display: block !important;
+  width: 100% !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  overflow-x: visible !important;
+}
+
