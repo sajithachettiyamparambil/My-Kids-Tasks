@@ -1904,3 +1904,9 @@ textarea {
 .approval-card .approval-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .approval-card .approval-actions .approval-child { flex: 1 1 100%; }
 .approval-card .approval-actions > button { flex: 1 1 100px; }
+
+/* Keep child approval names side by side */
+.approval-card .approval-actions .approval-child { flex: 0 1 auto; white-space: nowrap; }
+
+/* Keep every parent task title on one line */
+.approval-card .task-info h3 { white-space: nowrap; overflow-x: auto; overflow-wrap: normal; }
