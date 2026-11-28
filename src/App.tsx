@@ -1009,7 +1009,7 @@ function updateCheckIn(
             <div className="child-photo">
               {photos[selectedChild]
                 ? <img src={photos[selectedChild]} alt={children.find(child => child.id === selectedChild)?.name || 'Child'} />
-                : <span>ÃƒÂ°Ã…Â¸Ã…â€™Ã…Â¸</span>}
+                : <span>{'\u2B50'}</span>}
             </div>
             <div>
               <h2>Hello, {children.find(child => child.id === selectedChild)?.name.trim() || 'Little Star'}! {'\u{1F44B}'}</h2>
@@ -1077,9 +1077,9 @@ function updateCheckIn(
   <label>3. Are you happy today?</label>
   <select value={checkIns.find(item => item.childId === selectedChild && item.date === today)?.mood ?? ''} onChange={e => updateCheckIn('mood', e.target.value)}>
     <option value="">Choose an answer</option>
-    <option>Happy ÃƒÂ°Ã…Â¸Ã‹Å“Ã…Â </option>
-    <option>Okay ÃƒÂ°Ã…Â¸Ã‹Å“Ã‚Â</option>
-    <option>Sad ÃƒÂ°Ã…Â¸Ã‹Å“Ã‚Â¢</option>
+    <option>Happy</option>
+    <option>Okay</option>
+    <option>Sad</option>
   </select>
 
   <label>4. Do you have any sadness?</label>
@@ -1158,19 +1158,19 @@ function updateCheckIn(
 
         <button
           type="button"
-          className={`task-tick ${done ? 'checked' : ''}`}
+          className={`task-tick ${done ? '\u2713' : '\u2610'}`}
           disabled={done || !available}
           onClick={() => markDone(task, selectedChild)}
           aria-label="Mark task as done"
         >
-          {done ? 'âœ“' : 'â˜'}
+          {done ? '\u2713' : '\u2610'}
         </button>
       </div>
     );
   })}
 </section>
           <section className="card">
-            <h2>ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â My Rewards</h2>
+            <h2>My Rewards</h2>
             {rewards.length === 0 && <p className="empty-message">Your rewards will appear here.</p>}
             {rewards.map(reward => (
               <div className="task-card" key={reward.id}>
@@ -1249,18 +1249,18 @@ function updateCheckIn(
         <main className="main-content">
           {showSettings && (<><ParentPasskeyPanel mode="setup" />
                <section className="card theme-settings">
-            <h2>ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¨ Choose App Theme</h2>
+            <h2>Choose App Theme</h2>
             <p>Pick your favourite look!</p>
           <div className="theme-options">
-  <button onClick={() => setTheme('dream')}>ÃƒÂ°Ã…Â¸Ã‚Â¦Ã¢â‚¬Å¾ Dream Magic</button>
-  <button onClick={() => setTheme('bunny')}>ÃƒÂ°Ã…Â¸Ã‚ÂÃ‚Â° Sweet Bunny</button>
-  <button onClick={() => setTheme('sky')}>ÃƒÂ¢Ã‹Å“Ã‚ÂÃƒÂ¯Ã‚Â¸Ã‚Â Sky Adventure</button>
-  <button onClick={() => setTheme('jungle')}>ÃƒÂ°Ã…Â¸Ã…â€™Ã‚Â¿ Jungle Fun</button>
-  <button onClick={() => setTheme('classic')}>ÃƒÂ°Ã…Â¸Ã…â€™Ã‚Â¸ Classic Calm</button>
-  <button onClick={() => setTheme('starry')}>ÃƒÂ°Ã…Â¸Ã…â€™Ã¢â€žÂ¢ Starry Night</button>
-  <button onClick={() => setTheme('midnight')}>ÃƒÂ°Ã…Â¸Ã…â€™Ã…â€™ Midnight Purple</button>
-  <button onClick={() => setTheme('ocean')}>ÃƒÂ°Ã…Â¸Ã…â€™Ã…Â  Deep Ocean</button>
-  <button onClick={() => setTheme('forest')}>ÃƒÂ°Ã…Â¸Ã…â€™Ã‚Â² Dark Forest</button>
+  <button onClick={() => setTheme('dream')}>Dream Magic</button>
+  <button onClick={() => setTheme('bunny')}>Sweet Bunny</button>
+  <button onClick={() => setTheme('sky')}>Sky Adventure</button>
+  <button onClick={() => setTheme('jungle')}>Jungle Fun</button>
+  <button onClick={() => setTheme('classic')}>Classic Calm</button>
+  <button onClick={() => setTheme('starry')}>Starry Night</button>
+  <button onClick={() => setTheme('midnight')}>Midnight Purple</button>
+  <button onClick={() => setTheme('ocean')}>Deep Ocean</button>
+  <button onClick={() => setTheme('forest')}>Dark Forest</button>
 </div>
           </section>
           </>)}{!showSettings && (<><section className="card">
@@ -1273,7 +1273,7 @@ function updateCheckIn(
                     <div className="child-photo">
                       {photos[child.id]
                         ? <img src={photos[child.id]} alt={child.name.trim() || 'Add name'} />
-                        : <span>ÃƒÂ°Ã…Â¸Ã…â€™Ã…Â¸</span>}
+                        : <span>{'\u2B50'}</span>}
                     </div>
                     <div className="child-name-edit">
   <input
@@ -1313,7 +1313,7 @@ function updateCheckIn(
             }}>+ Add Child</button>
           </section>
           <section className="card">
-            <h2>ÃƒÂ°Ã…Â¸Ã¢â‚¬â„¢â€“ Children's Daily Check-in</h2>
+            <h2>Children's Daily Check-in</h2>
 
             {[...children].sort((a,b) => (a.gender === "boy" ? 0 : a.gender === "girl" ? 1 : 2) - (b.gender === "boy" ? 0 : b.gender === "girl" ? 1 : 2)).map(child => {
               const answer = checkIns.find(
@@ -1343,7 +1343,8 @@ function updateCheckIn(
             })}
           </section>
           <section className="card">
-          <h2>{editingTaskId !== null ? 'ÃƒÂ¢Ã…â€œÃ‚ÂÃƒÂ¯Ã‚Â¸Ã‚Â Edit Task' : 'ÃƒÂ¢Ã…Â¾Ã¢â‚¬Â¢ Add a Task'}</h2>         <form onSubmit={addTask} className="task-form">
+          <h2>{editingTaskId !== null ? 'Edit Task' : 'Add a Task'}</h2>
+          <form onSubmit={addTask} className="task-form">
               <label>Task name
                 <input value={taskTitle} onChange={event => setTaskTitle(event.target.value)}
                   placeholder="Example: Clean your room" required />
@@ -1446,7 +1447,7 @@ function updateCheckIn(
           </section>
 
           <section className="card">
-            <h2>ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã¢â‚¬Â¹ Task Approvals</h2>
+            <h2>Task Approvals</h2>
            {tasks.length === 0 &&
   <p className="empty-message">No tasks have been added.</p>}
            {[...tasks].sort((a, b) => a.start.localeCompare(b.start)).map(task => (
@@ -1486,11 +1487,11 @@ function updateCheckIn(
                         ? <span className="task-status">Approved {'\u2713'}</span>
                         : isDone(task, child.id)
                           ? <button onClick={() => approveTask(task, child.id)}>Approve {'\u2B50'}</button>
-                          : <span>Not completed</span>}
+                          : <span>{'\u2B50'}</span>}
                     </div>
                   ))}
                <button type="button" onClick={() => startEditingTask(task)}>
-  Edit ÃƒÂ¢Ã…â€œÃ‚ÂÃƒÂ¯Ã‚Â¸Ã‚Â
+  Edit
 </button>Add a Task
 <button className="delete-button"
   onClick={() => setTasks(old => old.filter(item => item.id !== task.id))}>
@@ -1501,7 +1502,7 @@ function updateCheckIn(
           </section>
 
           <section className="card">
-            <h2>ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â Add a Reward</h2>
+            <h2>Add a Reward</h2>
             <form onSubmit={addReward} className="task-form">
               <label>Reward name
                 <input value={rewardTitle} onChange={event => setRewardTitle(event.target.value)}
@@ -1536,8 +1537,7 @@ function updateCheckIn(
           <p>{reward.cost} {'\u2B50'}</p>
         </div>
 
-        <button type="button" onClick={() => startEditingReward(reward)}>
-          Edit ÃƒÂ¢Ã…â€œÃ‚ÂÃƒÂ¯Ã‚Â¸Ã‚Â
+        <button type="button" onClick={() => startEditingReward(reward)}>Edit
         </button>
 
         <button
