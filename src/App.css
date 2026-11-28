@@ -1919,3 +1919,37 @@ textarea {
 .star-history-card { padding: 8px 3px !important; min-height: 0 !important; height: auto !important; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
 .star-history-card h3 { font-size: 11px !important; line-height: 1.2 !important; white-space: nowrap !important; margin: 0 !important; }
 .star-history-card p { font-size: 14px !important; line-height: 1.2 !important; margin: 0 !important; text-align: center; }
+
+/* Final fixes: Star History and Parent task titles */
+.main-content:has(.star-history-grid) .star-history-grid .star-history-card {
+  display: flex !important;
+  grid-template-columns: none !important;
+  grid-template-rows: none !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  column-gap: 0 !important;
+  width: auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 6px 3px !important;
+  margin: 0 !important;
+}
+.main-content:has(.star-history-grid) .star-history-card > h3,
+.main-content:has(.star-history-grid) .star-history-card > p {
+  grid-column: auto !important;
+  grid-row: auto !important;
+  width: auto !important;
+  text-align: center !important;
+}
+.approval-card .task-info,
+.approval-card .task-info h3 {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+}
+
