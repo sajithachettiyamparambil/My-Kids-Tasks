@@ -1247,7 +1247,7 @@ function updateCheckIn(
 {view === 'parent' && parentUnlocked && (
 
         <main className="main-content">
-          {showSettings && (<><ParentPasskeyPanel mode="setup" />
+          {showSettings && (<>
                <section className="card theme-settings">
             <h2>Choose App Theme</h2>
             <p>Pick your favourite look!</p>
