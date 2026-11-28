@@ -228,7 +228,7 @@ function TimePicker({ label, value, onChange, disabled = false }: { label: strin
             })}
             <div className="clock-center" />
           </div>          <div className="minute-adjust">
-            <button type="button" disabled={disabled} onClick={() => adjustMinute(-1)}>ÃƒÂ¢Ã‹â€ Ã¢â‚¬â„¢1</button>
+            <button type="button" disabled={disabled} onClick={() => adjustMinute(-1)}>-1</button>
             <span>Exact minute: {String(selectedMinute).padStart(2, '0')}</span>
             <button type="button" disabled={disabled} onClick={() => adjustMinute(1)}>+1</button>
           </div>
@@ -990,7 +990,7 @@ function updateCheckIn(
           <p>Little tasks, big achievements!</p>
         </div>
         <div className="view-switch">
-      <button className={view === 'kids' ? 'active' : ''} onClick={() => { setView('kids'); setParentUnlocked(false); setShowParentLogin(false); }}>Kids</button>    <button className={view === 'parent' ? 'active' : ''} onClick={() => { setView('parent'); setShowParentLogin(true); }}>Parent</button> {parentUnlocked && <button type="button" className="settings-icon-button" title="Settings" aria-label="Settings" onClick={() => setShowSettings(!showSettings)}>âš™ï¸</button>}
+      <button className={view === 'kids' ? 'active' : ''} onClick={() => { setView('kids'); setParentUnlocked(false); setShowParentLogin(false); }}>Kids</button>    <button className={view === 'parent' ? 'active' : ''} onClick={() => { setView('parent'); setShowParentLogin(true); }}>Parent</button> {parentUnlocked && <button type="button" className="settings-icon-button" title="Settings" aria-label="Settings" onClick={() => setShowSettings(!showSettings)}>{'\u2699\uFE0F'}</button>}
         </div>
       </header>
 
@@ -1138,10 +1138,10 @@ function updateCheckIn(
         <div className="task-info task-info-compact">
           <h3>{task.title}</h3>
           <p>
-       {formatTime(task.start)} â€“ {formatTime(task.end)} Â· {duration} min          </p>
+       {formatTime(task.start)} {'\u2013'} {formatTime(task.end)} {'\u00B7'} {duration} min          </p>
 
           {approved && (
-            <span className="task-status">Approved âœ“</span>
+            <span className="task-status">Approved {'\u2713'}</span>
           )}
 
           {done && !approved && (
@@ -1266,17 +1266,10 @@ function updateCheckIn(
           </>)}{!showSettings && (<><section className="card">
             <h2>Children</h2>
             <div className="children-grid">
-              {[...children].sort((a,b) => (a.gender === "boy" ? 0 : a.gender === "girl" ? 1 : 2) - (b.gender === "boy" ? 0 : b.gender === "girl" ? 1 : 2)).map((child,index,sortedChildren) => {
+              {children.map(child => {
                 const childHistory = getStarHistory(child.id);
                 return (
-                  <>
-                    {(index === 0 || child.gender !== sortedChildren[index - 1]?.gender) && (
-                      <div className="child-group-heading" style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        {child.gender && <img src={child.gender === 'boy' ? '/boys/boy-characters.jpg' : '/girl/girl-characters.jpg'} alt={child.gender === 'boy' ? 'Boys' : 'Girls'} style={{ width: '120px', height: '90px', objectFit: 'contain' }} />}
-                        <h3>{child.gender === 'boy' ? 'Boys' : child.gender === 'girl' ? 'Girls' : 'Choose gender'}</h3>
-                      </div>
-                    )}
-                    <div className="child-card" key={child.id}>
+<div className="child-card" key={child.id}>
                     <div className="child-photo">
                       {photos[child.id]
                         ? <img src={photos[child.id]} alt={child.name.trim() || 'Add name'} />
@@ -1295,7 +1288,6 @@ function updateCheckIn(
     placeholder="Child's name"
   />
 </div>
-                    <label>Child profile<select value={child.gender ?? ""} onChange={event => setChildren(old => old.map(item => item.id === child.id ? { ...item, gender: event.target.value === "" ? undefined : event.target.value as "girl" | "boy" } : item))}><option value="">Choose</option><option value="girl">Girl</option><option value="boy">Boy</option></select></label>
                     <p>{stars[child.id]} {'\u2B50'} stars</p>
                     <p>Today: {childHistory.daily} {'\u2B50'}</p>
                     <p>This week: {childHistory.weekly} {'\u2B50'}</p>
@@ -1305,7 +1297,6 @@ function updateCheckIn(
                         onChange={event => uploadPhoto(child.id, event.target.files?.[0])} />
                     </label>
                   </div>
-                  </>
                 );
               })}
             </div>
@@ -1336,7 +1327,7 @@ function updateCheckIn(
                   {!answer ? (
                     <p>Not completed yet today.</p>
                   ) : (
-                    <>
+                        <>
                       <p>Shouted at sibling: {answer.shouted || 'Not answered'}</p>
                       <p>Spoke kindly: {answer.kindWords || 'Not answered'}</p>
                       <p>Today's mood: {answer.mood || 'Not answered'}</p>
@@ -1345,8 +1336,8 @@ function updateCheckIn(
                         <p>What is making them sad: {answer.sadnessNote}</p>
                       )}
                       <p>Obeyed parents: {answer.obeyed || 'Not answered'}</p>
-                    </>
-                  )}
+                                          </>
+                    )}
                 </div>
               );
             })}
@@ -1464,7 +1455,7 @@ function updateCheckIn(
                   <h3>{task.title}</h3>
                   <p>{task.child === -1 ? 'All children' :
                     children.find(child => child.id === task.child)?.name || 'Unnamed child'}
-                    {' Â· '}{formatTime(task.start)}â€“{formatTime(task.end)} Â· {task.stars} {'\u2B50'}</p>
+                    {' '}{'\u00B7'} {formatTime(task.start)}{'\u2013'}{formatTime(task.end)} {'\u00B7'} {task.stars} {'\u2B50'}</p>
                   {task.repeatType !== 'none' && (
   <span className="task-status">
     {task.repeatType === 'daily' ? 'Every day' :
@@ -1492,7 +1483,7 @@ function updateCheckIn(
 )}
 {child.name.trim() || 'Add name'}:</span>
                       {isApproved(task, child.id)
-                        ? <span className="task-status">Approved âœ“</span>
+                        ? <span className="task-status">Approved {'\u2713'}</span>
                         : isDone(task, child.id)
                           ? <button onClick={() => approveTask(task, child.id)}>Approve {'\u2B50'}</button>
                           : <span>Not completed</span>}
