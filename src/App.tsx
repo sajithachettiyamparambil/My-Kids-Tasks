@@ -1468,20 +1468,7 @@ function updateCheckIn(
                 <div className="approval-actions">
                   {children.filter(child => isAssigned(task, child.id)).map(child => (
                     <div className="approval-child" key={child.id}>
-                      <span>{photos[child.id] && (
-  <img
-    src={photos[child.id]}
-    alt={child.name.trim() || 'Add name'}
-    style={{
-      width: '38px',
-      height: '38px',
-      borderRadius: '50%',
-      objectFit: 'cover',
-      verticalAlign: 'middle',
-      marginRight: '8px'
-    }}
-  />
-)}
+                      <span>
 {child.name.trim() || 'Add name'}:</span>
                       {isApproved(task, child.id)
                         ? <span className="task-status">Approved {'\u2713'}</span>
