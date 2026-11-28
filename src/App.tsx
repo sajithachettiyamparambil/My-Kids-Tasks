@@ -1492,7 +1492,7 @@ function updateCheckIn(
                   ))}
                <button type="button" onClick={() => startEditingTask(task)}>
   Edit
-</button>Add a Task
+</button>
 <button className="delete-button"
   onClick={() => setTasks(old => old.filter(item => item.id !== task.id))}>
   Delete
